@@ -23,6 +23,8 @@
 					Foos.getGame(gameToken, function(game){
 						teams = game.teams;
 						$("#teams").text(gameToken + ' ' + JSON.stringify(game.teams));
+						$("#scores").empty();
+						$("#status").text("...");
 						$("#gamepan").removeClass("hide");
 					});
 				});

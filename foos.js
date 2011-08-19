@@ -3,9 +3,33 @@ Foos_SRV = 'http://localhost:27080/';
 Foos_DB = 'foos/game/';
 Foos_URL = Foos_SRV + Foos_DB;
 
-var crit = function(gameToken) { return 'criteria={"_id":{"$oid":"' + gameToken + '"}}'; }
-
 Foos.games = {};
+
+var _foos = {
+	crit: function(gameToken) { return 'criteria={"_id":{"$oid":"' + gameToken + '"}}'; },
+	update: function(gameToken, opsObj, callback) {
+		var ops = '&newobj=' + JSON.stringify(opsObj);
+		$.post(Foos_URL + '_update', _foos.crit(gameToken) + ops, function() {
+		
+			if ($.isFunction(callback)) {
+				_foos.getGame(gameToken, callback);
+			}
+		
+		}, 'json');
+	},
+	getGame: function(gameToken, callback) {
+		$.get(Foos_URL + '_find', _foos.crit(gameToken), function(data) {
+		
+			var game = data.results[0];
+			Foos.games[gameToken] = game;
+		
+			if ($.isFunction(callback)) {
+				callback(game);
+			}
+		
+		}, 'json')
+	}
+}
 
 Foos.game = function(teams, success) {
 	if (teams.length != 2) {
@@ -46,7 +70,7 @@ Foos.score = function(gameToken, team, player, position, success) {
 		}
 	}
 	
-	var score = {
+	var ops = {
 		$push: {
 			scores: {
 				team: team,
@@ -56,26 +80,26 @@ Foos.score = function(gameToken, team, player, position, success) {
 			}
 		}
 	};
-	var ops = '&newobj=' + JSON.stringify(score);
 	
-	$.post(Foos_URL + '_update', crit(gameToken) + ops, function() {
-
-		if ($.isFunction(success)) {
-			Foos.getGame(gameToken, success);
+	_foos.update(gameToken, ops, function(game) {
+		var score = Foos.getScore(game);
+		if (score[0] == 10 || score[1] == 10) {
+			// game ended
+			var ops = {
+				$set: {
+					score: score
+				}
+			}
+			_foos.update(gameToken, ops);
 		}
 		
-	}, 'json');
+		if ($.isFunction(success)) {
+			success(game);
+		}
+	});
 }
 
-Foos.getGame = function(gameToken, callback) {
-	$.get(Foos_URL + '_find', crit(gameToken), function(data) {
-		var game = data.results[0];
-		Foos.games[gameToken] = game;
-		if ($.isFunction(callback)) {
-			callback(game);
-		}
-	}, 'json')
-};
+Foos.getGame = _foos.getGame;
 
 Foos.getScore = function(game) {
 	var scores = [0,0];
