@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Foos</title>
+	<style>
+		body { font-family:monospace; font-size:8pt; }
+		a { text-decoration:none; color:#66A; }
+		.hide { display:none; }
+	</style>
+	<script src="jquery-1.6.2.min.js"></script>
+	<script src="foos.js"></script>
+	<script>
+		var token;
+		var teams;
+		$(function() {
+			$("#game").click(function() {
+				
+				Foos.game([
+					["Rouzbeh", "Josh"],
+					["Joakim", "Jesper"]
+				], function(gameToken) {
+					token = gameToken;
+					Foos.getGame(gameToken, function(game){
+						teams = game.teams;
+						$("#teams").text(gameToken + ' ' + JSON.stringify(game.teams));
+						$("#gamepan").removeClass("hide");
+					});
+				});
+				
+			});
+			$("#score").click(function() {
+				var team = Math.random() > 0.5 ? 0 : 1;
+				var pt = Math.floor(Math.random()*2);
+				var pl = teams[pt][Math.floor(Math.random()*teams[pt].length)];
+				var pos = Math.random() > 0.5 ? "A" : "B";
+				pos += Math.floor(Math.random()*11);
+				
+				Foos.score(token, team, pl, pos, function(game) {
+					var score = Foos.getScore(game);
+					$("#status").text(score[0] + " - " + score[1]);
+					$("#scores").empty();
+					for (score_pos in game.scores) {
+						var score = game.scores[score_pos];
+						$("#scores").append('<p>Score team:' + score.team + ' player:' + score.player + ' from:' + score.position + ' own:' + Foos.isSelfGoal(game, score) + '</p>');
+					}
+				});
+				
+			});
+		});
+	</script>
+</head>
+<body>
+	<h2><a href="#" id="game">new game</a></h2>
+	<p><div id="teams">...</div></p>
+	<div id="gamepan" class="hide">
+		<h2><a href="#" id="score">random score</a></h2>
+		<p><div id="status">...</div></p>
+		<p><div id="scores">...</div></p>
+	</div>
+</body>
+</html>
