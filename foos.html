@@ -12,6 +12,26 @@
 	<script>
 		var token;
 		var teams;
+		
+		var score = function(team) {
+			var pl = $("#player").val();
+			
+			// random position
+			var pos = Math.random() > 0.5 ? "A" : "B";
+			pos += Math.floor(Math.random()*11);
+			
+			Foos.score(token, team, pl, pos, function(game) {
+				var score = Foos.getScore(game);
+				$("#status").text(score[0] + " - " + score[1]);
+				$("#scores").empty();
+				for (score_pos in game.scores) {
+					var score = game.scores[score_pos];
+					$("#scores").append('<p>Score team:' + score.team + ' player:' + score.player + ' from:' + score.position + ' own:' + Foos.isSelfGoal(game, score) + '</p>');
+				}
+			});
+			
+		};
+		
 		$(function() {
 			$("#game").click(function() {
 				
@@ -22,6 +42,12 @@
 					token = gameToken;
 					Foos.getGame(gameToken, function(game){
 						teams = game.teams;
+						
+						$("#player").empty();
+						for (t in teams)
+							for (p in teams[t])
+								$("#player").append('<option value="' + teams[t][p] + '">' + teams[t][p] + '</select>')
+						
 						$("#teams").text(gameToken + ' ' + JSON.stringify(game.teams));
 						$("#scores").empty();
 						$("#status").text("...");
@@ -30,24 +56,8 @@
 				});
 				
 			});
-			$("#score").click(function() {
-				var team = Math.random() > 0.5 ? 0 : 1;
-				var pt = Math.floor(Math.random()*2);
-				var pl = teams[pt][Math.floor(Math.random()*teams[pt].length)];
-				var pos = Math.random() > 0.5 ? "A" : "B";
-				pos += Math.floor(Math.random()*11);
-				
-				Foos.score(token, team, pl, pos, function(game) {
-					var score = Foos.getScore(game);
-					$("#status").text(score[0] + " - " + score[1]);
-					$("#scores").empty();
-					for (score_pos in game.scores) {
-						var score = game.scores[score_pos];
-						$("#scores").append('<p>Score team:' + score.team + ' player:' + score.player + ' from:' + score.position + ' own:' + Foos.isSelfGoal(game, score) + '</p>');
-					}
-				});
-				
-			});
+			$("#score0").click(function() { score(0); });
+			$("#score1").click(function() { score(1); });
 		});
 	</script>
 </head>
@@ -55,7 +65,9 @@
 	<h2><a href="#" id="game">new game</a></h2>
 	<p><div id="teams">...</div></p>
 	<div id="gamepan" class="hide">
-		<h2><a href="#" id="score">random score</a></h2>
+		<select id="player"></select></br>
+		<a href="#" id="score0">score team 0</a></br>
+		<a href="#" id="score1">score team 1</a>
 		<p><div id="status">...</div></p>
 		<p><div id="scores">...</div></p>
 	</div>
