@@ -150,7 +150,7 @@
 					for (i in x) for (j in x) $("#team" + i + j).append('<option value="'+pl+'">'+pl+'</option>');
 				}
 			});
-			$("#start-game").click(function() {
+			var startGame = function() {
 				var pl00 = $("#team00n").val().length ? $("#team00n").val() : $("#team00").val();
 				var pl01 = $("#team01n").val().length ? $("#team01n").val() : $("#team01").val();
 				var pl10 = $("#team10n").val().length ? $("#team10n").val() : $("#team10").val();
@@ -169,7 +169,14 @@
 						$("#gamepan").removeClass("hide");
 					});
 				});
-				
+			};
+			$("#start-game").click(function() {
+				FoosSetCL('game');
+				startGame();
+			});
+			$("#start-test-game").click(function() {
+				FoosSetCL('game_test');
+				startGame();
 			});
 		});
 	</script>
@@ -250,7 +257,7 @@
 		<select id="team11"><option></option></select> or
 		<input id="team11n" type="text" />
 		<div style="clear:both;"></div>
-		<h1><a href="#" id="start-game">start game</a></h1>
+		<h1><a href="#" id="start-game">start game</a> | <a href="#" id="start-test-game">start test game</a></h1>
 	</div>
 </body>
 </html>

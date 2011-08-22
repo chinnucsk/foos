@@ -1,10 +1,16 @@
 Foos = {}
-Foos_SRV = '/';
+Foos_SRV = '';
 Foos_DB = 'foos';
 Foos_CL = 'game'
 Foos_PLCL = 'player'
 Foos_URL = Foos_SRV + Foos_DB + '/' + Foos_CL + '/';
 Foos_PLURL = Foos_SRV + Foos_DB + '/' + Foos_PLCL + '/';
+
+var FoosSetCL = function(cl) {
+	Foos_CL = cl;
+	Foos_URL = Foos_SRV + Foos_DB + '/' + Foos_CL + '/';
+	Foos_PLURL = Foos_SRV + Foos_DB + '/' + Foos_PLCL + '/';
+}
 
 Foos.games = {};
 
@@ -108,7 +114,7 @@ Foos.getGame = _foos.getGame;
 
 Foos.getPlayers = function(callback) {
 	if ($.isFunction(callback)) {
-		$.get(Foos_PLURL + '_find', function(data) {
+		$.get(Foos_PLURL + '_find?batch_size=1000', function(data) {
 			var players = [];
 			for (result in data.results) players.push(data.results[result].name);
 			players.sort();
