@@ -2,53 +2,114 @@
 <html>
 <head>
 	<title>Foos</title>
+	<meta name="viewport" content="width=device-width,height=device-height" />
 	<style>
 		body { font-family:monospace; font-size:8pt; }
 		a { text-decoration:none; color:#66A; }
 		.hide { display:none; }
+		
+		#field { font-size: 80%; }
+		.line {
+			clear:both;
+		}
+		.circle {
+			display: inline-block;
+			float: left;
+			margin: 1em;
+			-webkit-border-radius: 1em;
+			border: 1px solid #000;
+			width: 2em;
+			height: 2em;
+			cursor: pointer;
+		}
+		.white { background-color: #FFF; }
+		.blue  { background-color: #07A }
+		.circle-inv { cursor: auto; border-color: transparent; }
+		.circle-offs { margin-top: -1em; }
 	</style>
 	<script src="jquery-1.6.2.min.js"></script>
 	<script src="foos.js"></script>
 	<script>
+		window.addEventListener('load', function() {
+			setTimeout(scrollTo, 0, 0, 1);
+		}, false);
+	
 		var token;
 		var teams;
+		var switched = false;
+		var ownGoal = false;
 		
-		var score = function(team) {
-			var pl = $("#player").val();
+		var updateStats = function(game) {
+			$("#teams").text(token + ' ' + JSON.stringify(teams));
 			
-			// random position
-			var pos = Math.random() > 0.5 ? "A" : "B";
-			pos += Math.floor(Math.random()*11);
+			var score = Foos.getScore(game);
+			$("#status").text(score[0] + " - " + score[1]);
+			$("#scores").empty();
+			for (score_pos in game.scores) {
+				var score = game.scores[score_pos];
+				$("#scores").append('<p>Score team:' + score.team + ' player:' + score.player + ' from:' + score.position + ' own:' + Foos.isSelfGoal(game, score) + '</p>');
+			}
+		}
+		
+		var score = function(team, pos) {
+			if (token == undefined) return;
+			
+			// find player
+			var posColor = pos.substr(0,1) == "w" ? 0 : 1;
+			var posNum = pos.substr(1) * 1;
+			var pl = teams[posColor];
+			if (pl.length > 1)
+				pl = pl[posNum < 3 ? 0 : 1];
+			else
+				pl = pl[0];
+			
+			// reverse teams if switched
+			if (switched) team = team == 0 ? 1 : 0;
+			
+			// own goal?
+			if (ownGoal) {
+				team = team == 0 ? 1 : 0;
+				ownGoal = false;
+			}
 			
 			Foos.score(token, team, pl, pos, function(game) {
 				var score = Foos.getScore(game);
-				$("#status").text(score[0] + " - " + score[1]);
-				$("#scores").empty();
-				for (score_pos in game.scores) {
-					var score = game.scores[score_pos];
-					$("#scores").append('<p>Score team:' + score.team + ' player:' + score.player + ' from:' + score.position + ' own:' + Foos.isSelfGoal(game, score) + '</p>');
+				// switch teams
+				if (!switched && (score[0] == 5 || score[1] == 5)) {
+					switched = true;
+					for (team in teams) teams[team].reverse();
+					teams.reverse();
 				}
+				updateStats(game);
 			});
 			
 		};
 		
+		var scoreCaller = function(team, pos) {
+			return function() { score(team, pos); };
+		}
+		
+		var setupCircles = function(color, team) {
+			for (i = 0; i < 11; i++) {
+				var pos = color + i;
+				$("#" + pos).click(scoreCaller(team, pos));
+			}
+		};
+		
 		$(function() {
+			setupCircles("w", 0);
+			setupCircles("b", 1);
 			$("#game").click(function() {
 				
-				Foos.game([
-					["Rouzbeh", "Josh"],
-					["Joakim", "Jesper"]
-				], function(gameToken) {
+				Foos.game(
+				[["Rouzbeh", "Josh"],["Joakim", "Jesper"]],
+				function(gameToken) {
+					switched = false;
 					token = gameToken;
 					Foos.getGame(gameToken, function(game){
 						teams = game.teams;
-						
+						updateStats(game);
 						$("#player").empty();
-						for (t in teams)
-							for (p in teams[t])
-								$("#player").append('<option value="' + teams[t][p] + '">' + teams[t][p] + '</select>')
-						
-						$("#teams").text(gameToken + ' ' + JSON.stringify(game.teams));
 						$("#scores").empty();
 						$("#status").text("...");
 						$("#gamepan").removeClass("hide");
@@ -56,18 +117,67 @@
 				});
 				
 			});
-			$("#score0").click(function() { score(0); });
-			$("#score1").click(function() { score(1); });
 		});
 	</script>
 </head>
 <body>
 	<h2><a href="#" id="game">new game</a></h2>
 	<p><div id="teams">...</div></p>
+
+	<div id="field">
+		<div class="line">
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="w3" class="circle white"></div>
+			<div id="b7" class="circle blue"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+		</div>
+		<div class="line">
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="b10" class="circle blue"></div>
+			<div id="w4"  class="circle white"></div>
+			<div id="b6"  class="circle blue"></div>
+			<div id="w8"  class="circle white"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+		</div>
+		<div class="line">
+			<div id="w0" class="circle white"></div>
+			<div id="w1" class="circle white circle-offs"></div>
+			<div id="b9" class="circle blue"></div>
+			<div id="w5" class="circle white"></div>
+			<div id="b5" class="circle blue"></div>
+			<div id="w9" class="circle white"></div>
+			<div id="b2" class="circle blue circle-offs"></div>
+			<div id="b0" class="circle blue"></div>
+		</div>
+		<div class="line">
+			<div id="" class="circle circle-inv"></div>
+			<div id="w2"  class="circle white circle-offs"></div>
+			<div id="b8"  class="circle blue"></div>
+			<div id="w6"  class="circle white"></div>
+			<div id="b4"  class="circle blue"></div>
+			<div id="w10" class="circle white"></div>
+			<div id="b1"  class="circle blue circle-offs"></div>
+			<div id="" class="circle circle-inv"></div>
+		</div>
+		<div class="line">
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="w7" class="circle white"></div>
+			<div id="b3" class="circle blue"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+			<div id="" class="circle circle-inv"></div>
+		</div>
+	</div>
+	
 	<div id="gamepan" class="hide">
-		<select id="player"></select></br>
-		<a href="#" id="score0">score team 0</a></br>
-		<a href="#" id="score1">score team 1</a>
 		<p><div id="status">...</div></p>
 		<p><div id="scores">...</div></p>
 	</div>

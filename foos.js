@@ -1,5 +1,5 @@
 Foos = {}
-Foos_SRV = 'http://localhost:27080/';
+Foos_SRV = '/';
 Foos_DB = 'foos/game/';
 Foos_URL = Foos_SRV + Foos_DB;
 
@@ -11,9 +11,7 @@ var _foos = {
 		var ops = '&newobj=' + JSON.stringify(opsObj);
 		$.post(Foos_URL + '_update', _foos.crit(gameToken) + ops, function() {
 		
-			if ($.isFunction(callback)) {
-				_foos.getGame(gameToken, callback);
-			}
+			_foos.getGame(gameToken, callback);
 		
 		}, 'json');
 	},
@@ -46,7 +44,6 @@ Foos.game = function(teams, success) {
 	$.post(Foos_URL + '_insert', 'docs=' + JSON.stringify(docs), function(data) {
 		if ($.isFunction(success)) {
 			success(data.oids[0].$oid);
-			console.log(data);
 		}
 	},'json');
 }
@@ -108,6 +105,16 @@ Foos.getScore = function(game) {
 		scores[score.team]++;
 	}
 	return scores;
+}
+
+Foos.tallyScores = function(game) {
+	var tally = {};
+	for (score in game.scores) {
+		var pl = game.scores[score].player;
+		if (!tally[pl]) tally[pl] = 0;
+		tally[pl] += 1;
+	}
+	return tally;
 }
 
 Foos.isSelfGoal = function(game, score) {
