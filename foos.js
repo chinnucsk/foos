@@ -1,7 +1,10 @@
 Foos = {}
 Foos_SRV = '/';
-Foos_DB = 'foos/game/';
-Foos_URL = Foos_SRV + Foos_DB;
+Foos_DB = 'foos';
+Foos_CL = 'game'
+Foos_PLCL = 'player'
+Foos_URL = Foos_SRV + Foos_DB + '/' + Foos_CL + '/';
+Foos_PLURL = Foos_SRV + Foos_DB + '/' + Foos_PLCL + '/';
 
 Foos.games = {};
 
@@ -45,6 +48,11 @@ Foos.game = function(teams, success) {
 		if ($.isFunction(success)) {
 			success(data.oids[0].$oid);
 		}
+		// save player names
+		setTimeout(function() {
+			for (team in teams) for (player in teams[team])
+				$.post(Foos_PLURL + '_insert', 'docs=' + JSON.stringify({name:teams[team][player]}));
+		},50);
 	},'json');
 }
 
@@ -62,7 +70,7 @@ Foos.score = function(gameToken, team, player, position, success) {
 	if (Foos.games[gameToken] != undefined) {
 		var score = Foos.getScore(Foos.games[gameToken]);
 		if (score[0] == 10 || score[1] == 10) {
-			alert('game is over with score ' + score[0] + ' - ' + score[1]);
+			alert('game is already over with score ' + score[0] + ' - ' + score[1]);
 			return;
 		}
 	}
@@ -97,6 +105,17 @@ Foos.score = function(gameToken, team, player, position, success) {
 }
 
 Foos.getGame = _foos.getGame;
+
+Foos.getPlayers = function(callback) {
+	if ($.isFunction(callback)) {
+		$.get(Foos_PLURL + '_find', function(data) {
+			var players = [];
+			for (result in data.results) players.push(data.results[result].name);
+			players.sort();
+			callback(players);
+		});
+	}
+}
 
 Foos.getScore = function(game) {
 	var scores = [0,0];

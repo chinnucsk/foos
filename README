@@ -2,3 +2,8 @@ Dependencies
 
 MongoDB - http://www.mongodb.org/
 sleepy.mongoose - https://github.com/kchodorow/sleepy.mongoose
+
+MongoDB indexes
+
+use foos
+db.player.ensureIndex({name:1},{unique:true});
