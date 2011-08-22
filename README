@@ -3,7 +3,20 @@ Dependencies
 MongoDB - http://www.mongodb.org/
 sleepy.mongoose - https://github.com/kchodorow/sleepy.mongoose
 
+
 MongoDB indexes
 
 use foos
 db.player.ensureIndex({name:1},{unique:true});
+
+
+Interesting queries
+
+// count goals per position
+var map = function() {
+ for (s in this.scores) emit(this.scores[s].position.substr(1),1);
+}
+var reduce = function(key, values) {
+ return values.length;
+}
+db.game.mapReduce(map, reduce, {out:{inline:1}});
