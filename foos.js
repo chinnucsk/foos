@@ -56,7 +56,7 @@ Foos.game = function(teams, success) {
 		}
 		// save player names
 		setTimeout(function() {
-			for (team in teams) for (player in teams[team])
+			for (team in teams) for (player in teams[team]) if (teams[team][player].length)
 				$.post(Foos_PLURL + '_insert', 'docs=' + JSON.stringify({name:teams[team][player]}));
 		},50);
 	},'json');
