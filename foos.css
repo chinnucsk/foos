@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+table, td, th {
+  border: thin solid black;
+}
+
+thead th {
+  cursor: pointer;
+}
+
+td {
+  padding: 0px 10px;
+}
