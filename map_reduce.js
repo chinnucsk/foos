@@ -33,41 +33,55 @@
 //}
 
 var map = function() {
-  var players_to_team = {};
-  var player_goals = {};
+  var pt = {};
+  var pg = {};
+  var pog = {};
   var i = 0;
-  this.teams.forEach(function(team) {
-    team.forEach(function(player) {
-      players_to_team[player] = i;
-      player_goals[player] = 0;
+  this.teams.forEach(function(t) {
+    t.forEach(function(p) {
+      pt[p] = i;
+      pg[p] = 0;
+      pog[p] = 0;
     });
     i++;
   });
   this.scores.forEach(function(score) {
-    if (score.team == players_to_team[score.player])
-      player_goals[score.player]++;
+    if (score.team == pt[score.player])
+      pg[score.player]++;
+    else
+      pog[score.player]++;
   });
-  for (player in player_goals)
-    emit(player, {games: 1, goals: player_goals[player]});
+  for (p in pg)
+    emit(p, {games: 1, own_goals: pog[p], goals: pg[p]});
 };
 
 var reduce = function(key, values) {
-  var games = 0;
-  var goals = 0;
+  var o = {};
+  o.games     = 0;
+  o.goals     = 0;
+  o.own_goals = 0;
   values.forEach(function(doc) {
-      games += doc.games;
-      goals += doc.goals;
+      o.games     += doc.games;
+      o.goals     += doc.goals;
+      o.own_goals += doc.own_goals;
   });
-  return {games: games, goals: goals};
+  return o;
 };
 
-var mr = db.game.mapReduce(map, reduce, {out: {inline: 1}});
+var finalize = function(key, value) {
+  value.goals_per_game = value.goals / value.games;
+  return value;
+}
 
-mr.results.forEach(function(player) {
-  player.value.per_game = player.value.goals / player.value.games;
-});
+var query = {score: {$exists: true}, $where: "this.teams[0][0] != this.teams[0][1] && this.teams[1][0] != this.teams[1][1]"};
 
-mr.results.sort(function(a, b) {
-  return b.value.per_game - a.value.per_game;
-}).forEach(printjson);
+var mr = db.game.mapReduce(map, reduce, {finalize: finalize, query: query, out: {inline: 1}});
+
+var players = [];
+for (p in mr.results) {
+  mr.results[p].value.player = mr.results[p]._id;
+  players.push(mr.results[p].value);
+}
+
+printjson(players[0]);
 
