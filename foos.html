@@ -44,7 +44,8 @@
 			cursor: pointer;
 		}
 		.white { background-color: #FFF; }
-		.blue  { background-color: #07A }
+		.blue  { background-color: #07A; }
+		.red   { background-color: #F00; }
 		.circle-inv { cursor: auto; border-color: transparent; }
 		.circle-offs { margin-top: -1em; }
 	</style>
@@ -66,7 +67,9 @@
 					$("#player" + team + player).text(teams[team][player]);
 			
 			var score = Foos.getScore(game);
-			$("#score").text(score[0] + " - " + score[1]);
+			if (switched) score.reverse();
+			$("#score0").text(score[0]);
+			$("#score1").text(score[1]);
 			if (game.scores.length) {
 				var lscore = game.scores[game.scores.length-1];
 				var msg = "";
@@ -98,6 +101,7 @@
 			if (ownGoal) {
 				team = team == 0 ? 1 : 0;
 				ownGoal = false;
+				updateOG();
 			}
 			
 			Foos.score(token, team, pl, pos, function(game) {
@@ -140,6 +144,10 @@
 			}
 		};
 		
+		var updateOG = function() {
+			ownGoal ? $("#og").addClass("red") : $("#og").removeClass("red");
+		};
+		
 		$(function() {
 			setupCircles("w", 0);
 			setupCircles("b", 1);
@@ -178,6 +186,10 @@
 				FoosSetCL('game_test');
 				startGame();
 			});
+			$("#og").click(function() {
+				ownGoal = !ownGoal;
+				updateOG();
+			});
 		});
 	</script>
 </head>
@@ -185,10 +197,10 @@
 	<div id="gamepan" class="hide">
 		<p id="player10">p10</p>
 		<p id="player11">p11</p>
-		<h1><span id="score">0 - 0<span></h1>
+		<h1><span id="score1">0<span></h1>
 		<div id="field">
 			<div class="line">
-				<div id=""   class="circle circle-inv"></div>
+				<div id="og" class="circle">og</div>
 				<div id=""   class="circle circle-inv"></div>
 				<div id=""   class="circle circle-inv"></div>
 				<div id="w3" class="circle white"></div>
@@ -239,6 +251,7 @@
 			</div>
 			<div class="line"></div>
 		</div>
+		<h1><span id="score0">0<span></h1>
 		<p id="player01">p01</p>
 		<p id="player00">p00</p>
 		<p id="log">...</p>
