@@ -73,12 +73,15 @@ Foos.score = function(gameToken, team, player, position, success) {
 		return;
 	}
 	
+	var teams;
 	if (Foos.games[gameToken] != undefined) {
-		var score = Foos.getScore(Foos.games[gameToken]);
+		var game = Foos.games[gameToken];
+		var score = Foos.getScore(game);
 		if (score[0] == 10 || score[1] == 10) {
 			alert('game is already over with score ' + score[0] + ' - ' + score[1]);
 			return;
 		}
+		teams = game.teams;
 	}
 	
 	var ops = {
@@ -91,6 +94,10 @@ Foos.score = function(gameToken, team, player, position, success) {
 			}
 		}
 	};
+	if (teams) {
+		if (teams[team].indexOf(player) == -1)
+			ops.$push.scores.ownGoal = true;
+	}
 	
 	_foos.update(gameToken, ops, function(game) {
 		var score = Foos.getScore(game);
