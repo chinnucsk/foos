@@ -77,6 +77,26 @@
       this.addPlayer('Joshua');
       this.addPlayer('Hedenius');
       this.addPlayer('Pablo');
+      this.addPlayer('Per-Anders');
+      this.addPlayer('Michael');
+      this.addPlayer('Alfred');
+      this.addPlayer('Geries');
+      this.addPlayer('Haseeb');
+      this.addPlayer('Björn');
+      this.addPlayer('Nils');
+      this.addPlayer('Fredrik');
+      this.addPlayer('Owen');
+      this.addPlayer('Yonathan');
+      this.addPlayer('Dante');
+      this.addPlayer('Molgan');
+      this.addPlayer('Timh');
+      this.addPlayer('Caroline');
+      this.addPlayer('Nic');
+      this.addPlayer('Elin');
+      this.addPlayer('Manuel');
+      this.addPlayer('Erik');
+      this.addPlayer('Nelson');
+      this.addPlayer('Jonas');
       /*** ***/
     },
 
