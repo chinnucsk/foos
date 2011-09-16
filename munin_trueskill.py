@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# -*- coding: utf-8 -*-
 import sys
 import json
 from urllib2 import urlopen
@@ -7,9 +7,12 @@ from urllib2 import urlopen
 url = 'http://rouzbeh.videoplaza.org/foos.php'
 players = json.loads(urlopen(url).read())
 
+def removeNonAscii(s):
+    return "".join(i for i in s if ord(i)<ord('z') and ord(i)>=ord('A'))
+
 # config printers
 def conf(player, type):
-    id = player['name']
+    id = removeNonAscii(player['name'])
     print '%s.label %s'   %(id, player['name'])
     print '%s.min 0'      %(id)
     print '%s.type %s'    %(id, type)
@@ -28,4 +31,4 @@ if len(sys.argv) > 1 and sys.argv[1] == 'config':
 
 # print values (always the 'thisWeek' value)
 for player in players:
-    print '%s.value %f' %(player['name'], player['trueskill'])
+    print '%s.value %f' %(removeNonAscii(player['name']), player['trueskill'])
