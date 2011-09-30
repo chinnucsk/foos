@@ -142,7 +142,23 @@
 			});
 			
 		};
-		
+
+		var undo = function() {
+			Foos.undo(token, function(game) {
+				var score = Foos.getScore(game);
+
+				// switch sides?
+				if (switched && ((score[0] >= score[1] && score[0] == 4) || (score[1] >= score[0] && score[1] == 4))) {
+					switched = false;
+					for (team in teams) teams[team].reverse();
+					teams.reverse();
+					alert("Switch back!");
+				}
+				
+				updateStats(game);
+			});
+		}
+
 		var goalCaller = function(team, pos) {
 			return function() { goal(team, pos); };
 		}
@@ -201,19 +217,7 @@
 				updateOG();
 			});
 			$("#undo").click(function() {
-				Foos.undo(token, function(game) {
-					var score = Foos.getScore(game);
-					// switch teams
-					/// think carefully about how to handle this!
-					///if (!switched && (score[0] == 5 || score[1] == 5)) {
-						///switched = true;
-						///for (team in teams) teams[team].reverse();
-						///teams.reverse();
-						///alert("Switch sides!");
-					///}
-					
-					updateStats(game);
-				});
+				undo();
 			});
 		});
 	</script>
