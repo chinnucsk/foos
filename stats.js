@@ -21,18 +21,16 @@
     defaults: {
       rank: 0,
       name: 'player',
+      games_played: 0,
       wins: 0,
       losses: 0,
-      winning_pct: 0.0,
+      winning_pct: 0,
       goals: 0,
-      goals_per_game: 0.0,
+      goals_per_game: 0,
       trueskill: 0.0,
       mu: 0.0,
       sigma: 0.0,
     },
-//	games_played : function() { return this.get("wins") + this.get("losses"); }
-//	,winning_pct : function () { return this.games_played() != 0 ? this.get("wins")/this.games_played() : 0;}
-//	,goals_per_game : function () {return this.games_played() != 0 ? this.get("goals")/this.games_played(): 0;}
   });
 
   var PlayerList = Backbone.Collection.extend({
@@ -50,15 +48,21 @@
     render: function() {
       console.log("rendering item");
       var html = '';
+
+      // Calculate the dynamic attributes. This is really hacky, but will suffice until we
+      // find a more Backbone-y way to do it.
+      this.model.attributes.games_played = this.model.get('wins') + this.model.get('losses');
+      this.model.attributes.winning_pct = ((this.model.get('games_played') != 0 ? this.model.get('wins') / this.model.get('games_played') : 0) * 100).toFixed(2) + '%';
+      this.model.attributes.goals_per_game = (this.model.get('games_played') != 0 ? this.model.get('goals') / this.model.get('games_played') : 0).toFixed(2);
+
       _(columns).each(function(column) {
-        if (this.model.has(attrFrom(column)))
-          html += '<td>' + this.model.get(attrFrom(column)) + '</td>';
-        else {
-          console.log(attrFrom(column));
-          var attr = this.model[attrFrom(column)];
-          var tdContents = attr ? attr.call() : '';
-          html += '<td>' + tdContents + '</td>';
+        var tdContents = '';
+
+        if (this.model.has(attrFrom(column))) {
+          tdContents = this.model.get(attrFrom(column));
         }
+
+        html += '<td>' + tdContents + '</td>';
       }, this);
       $(this.el).html(html);
 
@@ -70,7 +74,7 @@
     el: $('#players'),
 
     initialize: function() {
-      _.bindAll(this, 'render', 'addPlayer', 'appendPlayer');
+      _.bindAll(this, 'render', 'appendPlayer');
       console.log("initialize");
       this.collection = new PlayerList();
       this.collection.bind('all', this.render, this);
@@ -95,34 +99,6 @@
       }, this);
       $('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
     },
-
-    /*** Fake data for demonstration purposes ***/
-    addPlayer: function(name) {
-      this.counter++;
-      var games_played = Math.floor(Math.random() * 101) + 1;
-      var wins = Math.floor(Math.random() * games_played) + 1;
-      var losses = games_played - wins;
-      var winning_pct = (wins / games_played * 100).toFixed(2) + '%';
-      var goals = Math.floor(Math.random() * games_played * 10);
-      var goals_per_game = (goals / games_played).toFixed(2);
-
-      var item = new Player();
-      item.set({
-        rank: this.counter,
-        name: name,
-        games_played: games_played,
-        wins: wins,
-        losses: losses,
-        winning_pct: winning_pct,
-        goals: goals,
-        goals_per_game: goals_per_game,
-        trueskill: (Math.random() * 30).toFixed(10),
-        μ: (Math.random() * 40).toFixed(10),
-        σ: (Math.random() * 10).toFixed(10),
-      });
-      this.collection.add(item);
-    },
-    /*** ***/
 
     appendPlayer: function(item) {
       console.log("appendPlayer");
