@@ -154,7 +154,13 @@
 					teams.reverse();
 					alert("Switch back!");
 				}
-				
+
+				// if we're undoing a winning goal, let the players know
+				if ((score[0] >= score[1] && score[0] == 9) || (score[1] >= score[0] && score[1] == 9)) {
+					$("#game-select").addClass("hide");
+					alert("Game's not over yet!");
+				}
+
 				updateStats(game);
 			});
 		}

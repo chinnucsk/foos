@@ -124,15 +124,19 @@ Foos.undo = function(gameToken, success) {
   }
 
   var game = Foos.games[gameToken];
-  if (game) {
-    var score = Foos.getScore(game);
-    if (score[0] == 0 && score[1] == 0) {
-      alert('Cannot undo when score is 0-0');
-      return;
-    }
+  if (game == undefined)
+    return;
+
+  var score = Foos.getScore(game);
+  if (score[0] == 0 && score[1] == 0) {
+    alert('Cannot undo when score is 0-0');
+    return;
   }
 
   var ops = { $pop: { scores: 1 } };
+
+  // The game can never be over after an undo, so mark it as incomplete
+  ops.$unset = { score: 1 };
 
   _foos.update(gameToken, ops, function(game) {
     if ($.isFunction(success)) {
