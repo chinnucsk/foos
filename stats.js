@@ -9,8 +9,8 @@
     'Goals',
     'Goals per game',
     'TrueSkill',
-    'μ',
-    'σ',
+    'mu',
+    'sigma',
   ];
 
   var attrFrom = function(column) {
@@ -21,20 +21,23 @@
     defaults: {
       rank: 0,
       name: 'player',
-      games_played: 0,
       wins: 0,
       losses: 0,
       winning_pct: 0.0,
       goals: 0,
       goals_per_game: 0.0,
       trueskill: 0.0,
-      μ: 0.0,
-      σ: 0.0,
-    }
+      mu: 0.0,
+      sigma: 0.0,
+    },
+//	games_played : function() { return this.get("wins") + this.get("losses"); }
+//	,winning_pct : function () { return this.games_played() != 0 ? this.get("wins")/this.games_played() : 0;}
+//	,goals_per_game : function () {return this.games_played() != 0 ? this.get("goals")/this.games_played(): 0;}
   });
 
   var PlayerList = Backbone.Collection.extend({
-    model: Player
+    model: Player,
+    url: 'http://rouzbeh.videoplaza.org/foos.php',
   });
 
   var PlayerView = Backbone.View.extend({
@@ -45,9 +48,17 @@
     },
 
     render: function() {
+      console.log("rendering item");
       var html = '';
       _(columns).each(function(column) {
-        html += '<td>' + this.model.get(attrFrom(column)) + '</td>';
+        if (this.model.has(attrFrom(column)))
+          html += '<td>' + this.model.get(attrFrom(column)) + '</td>';
+        else {
+          console.log(attrFrom(column));
+          var attr = this.model[attrFrom(column)];
+          var tdContents = attr ? attr.call() : '';
+          html += '<td>' + tdContents + '</td>';
+        }
       }, this);
       $(this.el).html(html);
 
@@ -60,53 +71,29 @@
 
     initialize: function() {
       _.bindAll(this, 'render', 'addPlayer', 'appendPlayer');
-
+      console.log("initialize");
       this.collection = new PlayerList();
-      this.collection.bind('add', this.appendPlayer);
-
+      this.collection.bind('all', this.render, this);
+      this.collection.bind('add', this.appendPlayer,this);
+      this.collection.bind('refresh', this.render,this);
+      this.collection.fetch({success:function(c,r) {console.log("success" +r);},error:function(c,r) {console.log("FAIL"+r);window.errr=r}});
       this.counter = 0;
-      this.render();
 
-      /*** Fake data for demonstration purposes ***/
-      this.addPlayer('Rouzbeh');
-      this.addPlayer('Bergman');
-      this.addPlayer('Jesper');
-      this.addPlayer('Alex');
-      this.addPlayer('Jakob');
-      this.addPlayer('Sarnelid');
-      this.addPlayer('Joshua');
-      this.addPlayer('Hedenius');
-      this.addPlayer('Pablo');
-      this.addPlayer('Per-Anders');
-      this.addPlayer('Michael');
-      this.addPlayer('Alfred');
-      this.addPlayer('Geries');
-      this.addPlayer('Haseeb');
-      this.addPlayer('Björn');
-      this.addPlayer('Nils');
-      this.addPlayer('Fredrik');
-      this.addPlayer('Owen');
-      this.addPlayer('Yonathan');
-      this.addPlayer('Dante');
-      this.addPlayer('Molgan');
-      this.addPlayer('Timh');
-      this.addPlayer('Caroline');
-      this.addPlayer('Nic');
-      this.addPlayer('Elin');
-      this.addPlayer('Manuel');
-      this.addPlayer('Erik');
-      this.addPlayer('Nelson');
-      this.addPlayer('Jonas');
-      /*** ***/
+      this.render();
     },
 
     render: function() {
+      console.log("rendering collection");
+      this.$('tr','thead').html('');
       _(columns).each(function(column) {
         $('tr', 'thead', this.el).append('<th>' + column + '</th>');
       }, this);
+
+      console.log("rendering items");
       _(this.collection.models).each(function(item) {
-        appendPlayer(item);
+        this.appendPlayer(item);
       }, this);
+      $('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
     },
 
     /*** Fake data for demonstration purposes ***/
@@ -138,6 +125,7 @@
     /*** ***/
 
     appendPlayer: function(item) {
+      console.log("appendPlayer");
       var itemView = new PlayerView({
         model: item
       });
@@ -146,5 +134,6 @@
   });
 
   var listView = new PlayerListView();
-  $('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
+  
+  //$('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
 })(jQuery);
