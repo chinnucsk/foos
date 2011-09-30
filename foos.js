@@ -117,6 +117,21 @@ Foos.score = function(gameToken, team, player, position, success) {
 	});
 }
 
+Foos.undo = function(gameToken, success) {
+  if (gameToken == undefined) {
+    alert('must specify gameToken');
+    return;
+  }
+
+  var ops = { $pop: { scores: 1 } };
+
+  _foos.update(gameToken, ops, function(game) {
+    if ($.isFunction(success)) {
+      success(game);
+    }
+  });
+}
+
 Foos.getGame = _foos.getGame;
 
 Foos.getPlayers = function(callback) {

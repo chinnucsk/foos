@@ -199,6 +199,21 @@
 				ownGoal = !ownGoal;
 				updateOG();
 			});
+			$("#undo").click(function() {
+				Foos.undo(token, function(game) {
+					var score = Foos.getScore(game);
+					// switch teams
+					/// think carefully about how to handle this!
+					///if (!switched && (score[0] == 5 || score[1] == 5)) {
+						///switched = true;
+						///for (team in teams) teams[team].reverse();
+						///teams.reverse();
+						///alert("Switch sides!");
+					///}
+					
+					updateStats(game);
+				});
+			});
 		});
 	</script>
 </head>
@@ -216,7 +231,7 @@
 				<div id="b7" class="circle blue"></div>
 				<div id=""   class="circle circle-inv"></div>
 				<div id=""   class="circle circle-inv"></div>
-				<div id=""   class="circle circle-inv"></div>
+				<div id="undo" class="square red">&lt;</div>
 			</div>
 			<div class="line">
 				<div id=""    class="circle circle-inv"></div>
