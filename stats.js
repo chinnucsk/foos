@@ -31,6 +31,16 @@
       mu: 0.0,
       sigma: 0.0,
     },
+
+    setDynamicAttrs: function() {
+      this.attributes.games_played = this.get('wins') + this.get('losses');
+      this.attributes.winning_pct = ((this.get('games_played') != 0 ? this.get('wins') / this.get('games_played') : 0) * 100).toFixed(2) + '%';
+      this.attributes.goals_per_game = (this.get('games_played') != 0 ? this.get('goals') / this.get('games_played') : 0).toFixed(2);
+    },
+
+    initialize: function() {
+      _.bindAll(this, 'setDynamicAttrs');
+    },
   });
 
   var PlayerList = Backbone.Collection.extend({
@@ -49,12 +59,7 @@
       console.log("rendering item");
       var html = '';
 
-      // Calculate the dynamic attributes. This is really hacky, but will suffice until we
-      // find a more Backbone-y way to do it.
-      this.model.attributes.games_played = this.model.get('wins') + this.model.get('losses');
-      this.model.attributes.winning_pct = ((this.model.get('games_played') != 0 ? this.model.get('wins') / this.model.get('games_played') : 0) * 100).toFixed(2) + '%';
-      this.model.attributes.goals_per_game = (this.model.get('games_played') != 0 ? this.model.get('goals') / this.model.get('games_played') : 0).toFixed(2);
-
+      this.model.setDynamicAttrs();
       _(columns).each(function(column) {
         var tdContents = '';
 
