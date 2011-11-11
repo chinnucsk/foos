@@ -4,8 +4,13 @@
 	<title>Foos</title>
 	<meta name="viewport" content="width=device-width,height=device-height" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="stylesheet" href="foos.css" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="foos.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+
+	<link rel="apple-touch-icon"                 href="apple-touch-icon.png" />
+	<link rel="apple-touch-icon" sizes="72x72"   href="apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+
 	<script src="foos.js"></script>
 	<script>
 		window.addEventListener('load', function() {
@@ -16,7 +21,7 @@
 		var teams;
 		var switched = false;
 		var ownGoal = false;
-    var players = [];
+		var players = [];
 		
 		var updateStats = function(game) {
 			for (team in teams)
