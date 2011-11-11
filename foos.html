@@ -4,62 +4,8 @@
 	<title>Foos</title>
 	<meta name="viewport" content="width=device-width,height=device-height" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<style>
-		body { font-family:monospace; font-size:8pt; }
-		a { text-decoration:none; color:#66A; }
-		input { width: 7em; }
-		.hide { display:none; }
-		
-		#player00, #player01, #player10, #player11 {
-			font-weight: bold;
-		}
-		
-		#player00, #player11 {
-			float: left;
-		}
-		#player01, #player10 {
-			float: right;
-		}
-		
-		#gamepan {
-			text-align: center;
-		}
-		#field {
-			font-size: 70%;
-			text-align: center;
-			width: auto;
-			clear: both;
-		}
-		.line {
-			clear: both;
-		}
-		.circle {
-			display: inline;
-			float: left;
-			margin: 0.5em 1.4em;
-			-webkit-border-radius: 1em;
-			border: 1px solid #000;
-			width: 2em;
-			height: 2em;
-			cursor: pointer;
-		}
-		.square {
-			display: inline;
-			float: left;
-			margin: 0.5em 1.4em;
-			border: 1px solid #000;
-			width: 2em;
-			height: 2em;
-			cursor: pointer;
-			text-align: center;
-		}
-		.white { background-color: #FFF; }
-		.blue  { background-color: #07A; }
-		.red   { background-color: #F00; color: #FFF; }
-		.circle-inv { cursor: auto; border-color: transparent; }
-		.circle-offs { margin-top: -1em; }
-	</style>
-	<script src="jquery-1.6.2.min.js"></script>
+  <link rel="stylesheet" href="foos.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
 	<script src="foos.js"></script>
 	<script>
 		window.addEventListener('load', function() {
@@ -70,6 +16,7 @@
 		var teams;
 		var switched = false;
 		var ownGoal = false;
+    var players = [];
 		
 		var updateStats = function(game) {
 			for (team in teams)
@@ -181,9 +128,13 @@
 		};
 		
 		$(function() {
+      Foos.setHost('http://rouzbeh.videoplaza.org/foos/');
 			setupCircles("w", 0);
 			setupCircles("b", 1);
 			Foos.getPlayers(function(players){
+        $.each(players, function(i, player) {
+          $('ul#playerlist').append('<li class="player" data-player="' + player + '">' + player + '</li>');
+        });
 				var x = [0,1];
 				for (p in players) {
 					var pl = players[p];
@@ -210,6 +161,25 @@
 					});
 				});
 			};
+			$("#oldschool").click(function() {
+        $("ul#playerlist").addClass('hide');
+        $("#game-select").removeClass('hide');
+        $("#oldschool").addClass('hide');
+			});
+      $("ul#playerlist li.player").live('click', function() {
+        players.push($(this).data('player'));
+        $(this).append('<span class="number">' + players.length + '</span>');
+        if (players.length == 4) {
+          $("ul#playerlist").hide();
+          $("#team00").val(players[0]);
+          $("#team01").val(players[1]);
+          $("#team10").val(players[2]);
+          $("#team11").val(players[3]);
+          $("#oldschool").addClass('hide');
+          FoosSetCL('test');
+          startGame();
+        }
+      });
 			$("#start-game").click(function() {
 				FoosSetCL('game');
 				startGame();
@@ -291,7 +261,9 @@
 		<h1><span id="score0">0<span></h1>
 		<p id="log">...</p>
 	</div>
-	<div id="game-select" class="">
+  <button id="oldschool">TAKE ME BACK!</button>
+  <ul id="playerlist"></ul>
+	<div id="game-select" class="hide">
 		<h2>team select</h2>
 		<div class="circle white"></div>
 		<select id="team00"><option></option></select> or

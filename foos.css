@@ -1,13 +1,102 @@
-@CHARSET "UTF-8";
+body { margin: 0; padding: 0; font-family:monospace; font-size:8pt; -webkit-text-size-adjust:none; }
+a { text-decoration:none; color:#66A; }
+input { width: 7em; }
+.hide { display:none; }
 
-table, td, th {
-  border: thin solid black;
+#player00, #player01, #player10, #player11 {
+  font-weight: bold;
 }
 
-thead th {
+#player00, #player11 {
+  float: left;
+}
+#player01, #player10 {
+  float: right;
+}
+
+#gamepan {
+  text-align: center;
+}
+#field {
+  font-size: 70%;
+  text-align: center;
+  width: auto;
+  clear: both;
+}
+.line {
+  clear: both;
+}
+.circle {
+  display: inline;
+  float: left;
+  margin: 0.5em 1.4em;
+  -webkit-border-radius: 1em;
+  border: 1px solid #000;
+  width: 2em;
+  height: 2em;
   cursor: pointer;
 }
+.square {
+  display: inline;
+  float: left;
+  margin: 0.5em 1.4em;
+  border: 1px solid #000;
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  text-align: center;
+}
+.white { background-color: #FFF; }
+.blue  { background-color: #07A; }
+.red   { background-color: #F00; color: #FFF; }
+.circle-inv { cursor: auto; border-color: transparent; }
+.circle-offs { margin-top: -1em; }
 
-td {
-  padding: 0px 10px;
+ul {
+  font-size:20px;             /* All text content is 20 pixels */
+  font-family: Helvetica;
+  font-weight:bold;
+  margin: 0;               /* The list fills the whole iPhone screen */
+  padding: 0;
+  width: 320px;           /* Each cell is 320 pixels wide */
+  background-color: white;
+}
+
+
+ul li {
+  position: relative;
+  list-style-type: none;
+  border-top-width:1px;                    /*   Add a line at the top of every cell */
+  border-top-color:rgb(217,217,217);
+  border-top-style:solid;
+  padding-top:10px;
+  padding-right:10px;
+  padding-bottom:14px;
+  padding-left:10px;
+  height:19px;       /* The total cell height includes the padding-top, padding-bottom, border and height values: 10+14+1+19=44 pixels */
+  line-height:19px;  /* Ensure that the height of the cell includes the line at the top of the cell  */
+}
+
+
+ul li:first-child {
+  border-top:0;   /* Remove the line above the first item of the list */
+}
+
+ul li span.number {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  color: red;
+}
+
+ul li span.number + span.number {
+  right: 33px;
+}
+
+ul li span.number + span.number + span.number {
+  right: 53px;
+}
+
+ul li span.number + span.number + span.number + span.number {
+  right: 73px;
 }

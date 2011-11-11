@@ -12,6 +12,11 @@ var FoosSetCL = function(cl) {
 	Foos_PLURL = Foos_SRV + Foos_DB + '/' + Foos_PLCL + '/';
 }
 
+Foos.setHost = function(host) {
+  Foos_SRV = host;
+  FoosSetCL(Foos_CL);
+};
+
 Foos.games = {};
 
 var _foos = {
