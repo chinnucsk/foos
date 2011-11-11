@@ -146,13 +146,8 @@
 					for (i in x) for (j in x) $("#team" + i + j).append('<option value="'+pl+'">'+pl+'</option>');
 				}
 			});
-			var startGame = function() {
-				var pl00 = $("#team00n").val().length ? $("#team00n").val() : $("#team00").val();
-				var pl01 = $("#team01n").val().length ? $("#team01n").val() : $("#team01").val();
-				var pl10 = $("#team10n").val().length ? $("#team10n").val() : $("#team10").val();
-				var pl11 = $("#team11n").val().length ? $("#team11n").val() : $("#team11").val();
-				Foos.game(
-				[[pl00, pl01],[pl10, pl11]],
+      var startGameWithPlayers = function(players) {
+				Foos.game([[players[0], players[1]],[players[2], players[3]]],
 				function(gameToken) {
 					switched = false;
 					token = gameToken;
@@ -165,6 +160,21 @@
 						$("#gamepan").removeClass("hide");
 					});
 				});
+      };
+      if (window.location.hash) {
+        var hash = window.location.hash.replace('#', '').split(',');
+				FoosSetCL('game');
+        $("ul#playerlist").addClass('hide');
+        startGameWithPlayers(hash);
+      };
+			var startGame = function() {
+        var players = [
+          $("#team00n").val().length ? $("#team00n").val() : $("#team00").val(),
+          $("#team01n").val().length ? $("#team01n").val() : $("#team01").val(),
+          $("#team10n").val().length ? $("#team10n").val() : $("#team10").val(),
+          $("#team11n").val().length ? $("#team11n").val() : $("#team11").val()
+        ]
+        startGameWithPlayers(players);
 			};
 			$("#oldschool").click(function() {
         $("ul#playerlist").addClass('hide');
@@ -177,13 +187,9 @@
         player.append('<span class="number">' + players.length + '</span>');
         if (players.length == 4) {
           $("ul#playerlist").hide();
-          $("#team00").val(players[0]);
-          $("#team01").val(players[1]);
-          $("#team10").val(players[2]);
-          $("#team11").val(players[3]);
           $("#oldschool").addClass('hide');
           FoosSetCL('game');
-          startGame();
+          startGameWithPlayers(players);
         }
       });
 			$("#start-game").click(function() {
