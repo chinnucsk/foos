@@ -171,9 +171,10 @@
         $("#game-select").removeClass('hide');
         $("#oldschool").addClass('hide');
 			});
-      $("ul#playerlist li.player").live('click', function() {
-        players.push($(this).data('player'));
-        $(this).append('<span class="number">' + players.length + '</span>');
+      $("ul#playerlist").click(function(e) {
+        var player = $(e.target);
+        players.push(player.data('player'));
+        player.append('<span class="number">' + players.length + '</span>');
         if (players.length == 4) {
           $("ul#playerlist").hide();
           $("#team00").val(players[0]);
@@ -181,7 +182,7 @@
           $("#team10").val(players[2]);
           $("#team11").val(players[3]);
           $("#oldschool").addClass('hide');
-          FoosSetCL('test');
+          FoosSetCL('game');
           startGame();
         }
       });
