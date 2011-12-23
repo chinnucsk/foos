@@ -46,8 +46,8 @@ input { width: 7em; }
   cursor: pointer;
   text-align: center;
 }
-.white { background-color: #FFF; }
-.blue  { background-color: #07A; }
+.white { background-color: #58bb47; }
+.blue  { background-color: #000; }
 .red   { background-color: #F00; color: #FFF; }
 .circle-inv { cursor: auto; border-color: transparent; }
 .circle-offs { margin-top: -1em; }
