@@ -29,7 +29,6 @@ import com.videoplaza.foosball.skill.FoosballRating;
 
 /**
  * @author jakob
- *
  */
 public class FoosballDB {
 
@@ -220,6 +219,7 @@ public class FoosballDB {
 
    private static StringBuilder json(StringBuilder sb, String name, Number value) {
       NumberFormat nf = NumberFormat.getInstance();
+      nf.setGroupingUsed(false);
       nf.setMaximumFractionDigits(4);
       return sb.append("\"").append(name).append("\"").append(":").append(value != null ? nf.format(value) : 0);
    }
@@ -237,7 +237,7 @@ public class FoosballDB {
       }
 
       ratings.recordMatch(players.get(game.getHomeTeam()[0]), players.get(game.getHomeTeam()[1]), players.get(game.getAwayTeam()[0]),
-            players.get(game.getAwayTeam()[1]), game.getHomeScore(), game.getAwayScore());
+         players.get(game.getAwayTeam()[1]), game.getHomeScore(), game.getAwayScore());
 
       for (Player p : game.getPlayers(players)) {
          game.getDeltaMu().put(p.getName(), p.getSkill() - deltaMu.get(p.getName()));
