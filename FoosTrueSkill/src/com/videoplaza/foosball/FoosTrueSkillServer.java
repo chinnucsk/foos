@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -19,7 +18,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import com.videoplaza.foosball.model.Game;
-import com.videoplaza.foosball.model.Player;
 
 public class FoosTrueSkillServer extends HttpServlet {
    private static final long serialVersionUID = 1L;
@@ -41,7 +39,6 @@ public class FoosTrueSkillServer extends HttpServlet {
          resp.setContentType("application/json");
          writer.print(output);
       } else if (path.endsWith("game")) {
-         List<Player> players = db.getPlayers();
          SortedMap<Date, Game> games = db.getProcessedGames();
          resp.setContentType("text/plain");
          for (Entry<Date, Game> entry : games.entrySet()) {
@@ -87,5 +84,5 @@ public class FoosTrueSkillServer extends HttpServlet {
       } catch (Exception e) {
          e.printStackTrace();
       }
-   };
+   }
 }
