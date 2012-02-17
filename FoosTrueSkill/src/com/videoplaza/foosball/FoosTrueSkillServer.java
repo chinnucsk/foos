@@ -30,7 +30,11 @@ public class FoosTrueSkillServer extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       String path = req.getPathInfo();
-      String output = db.recalculate();
+
+      Date startDate = FoosballDB.createDate(req.getParameter("startDate"), FoosballDB.DEFAULT_START_DATE);
+      Date endDate = FoosballDB.createDate(req.getParameter("endDate"), FoosballDB.DEFAULT_END_DATE);
+
+      String output = db.recalculate(startDate, endDate);
 
       PrintWriter writer = resp.getWriter();
       if (path.endsWith("player")) {

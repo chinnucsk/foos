@@ -33,6 +33,9 @@ import com.videoplaza.foosball.skill.FoosballRating;
  */
 public class FoosballDB {
 
+   public static Date DEFAULT_START_DATE = new Date(0);
+   public static Date DEFAULT_END_DATE = new Date(Long.MAX_VALUE);
+
    private DB db;
    private Map<String, Long> goalsPerPlayer;
    private Map<String, Long> winsPerPlayer;
@@ -49,10 +52,6 @@ public class FoosballDB {
       } catch (MongoException e) {
          e.printStackTrace();
       }
-   }
-
-   public List<Game> getGames() {
-      return getGames(new Date(0), new Date(Long.MAX_VALUE));
    }
 
    public List<Game> getGames(Date startDate, Date endDate) {
@@ -131,13 +130,13 @@ public class FoosballDB {
          map.put(key, 1L);
    }
 
-   public String recalculate() {
+   public String recalculate(Date startDate, Date endDate) {
       Map<String, Player> players = new HashMap<String, Player>();
       for (Player player : getPlayers()) {
          players.put(player.getName(), player);
       }
       processedGames = new TreeMap<Date, Game>();
-      for (Game game : getGames()) {
+      for (Game game : getGames(startDate, endDate)) {
          getProcessedGames().put(game.getStarted(), game);
       }
       FoosballRating ratings = new FoosballRating(players.values());
@@ -204,9 +203,19 @@ public class FoosballDB {
       }
    }
 
+   public static Date createDate(String str, Date fallback) {
+      if (str == null)
+         return fallback;
+
+      return new Date(Long.parseLong(str));
+   }
+
    public static void main(String[] args) {
+      Date startDate = createDate(args.length >= 1 ? args[0] : null, DEFAULT_START_DATE);
+      Date endDate = createDate(args.length >= 2 ? args[1] : null, DEFAULT_END_DATE);
+
       FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
-      System.out.println(db.recalculate());
+      System.out.println(db.recalculate(startDate, endDate));
    }
 
    private static StringBuilder json(StringBuilder sb, String name, Number value) {
