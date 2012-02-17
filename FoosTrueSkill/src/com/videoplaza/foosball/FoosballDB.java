@@ -52,6 +52,10 @@ public class FoosballDB {
    }
 
    public List<Game> getGames() {
+      return getGames(new Date(0), new Date(Long.MAX_VALUE));
+   }
+
+   public List<Game> getGames(Date startDate, Date endDate) {
       DBCollection collection = db.getCollection("game");
       DBCursor cursor = collection.find();
       List<Game> result = new ArrayList<Game>();
@@ -61,10 +65,14 @@ public class FoosballDB {
       long count = 0;
       for (DBObject object : cursor) {
          try {
+            Date started = (Date) object.get("date");
+            // TODO: filter dates in find() and remove this code
+            if (started.before(startDate) || started.after(endDate))
+               continue;
+
             List<Integer> score = (List) object.get("score");
             List<DBObject> scores = (List) object.get("scores");
             List teams = (List) object.get("teams");
-            Date started = (Date) object.get("date");
             List<String> homeTeam = (List) teams.get(0);
             List<String> awayTeam = (List) teams.get(1);
             result.add(new Game(started, homeTeam.get(0), homeTeam.get(1), awayTeam.get(0), awayTeam.get(1), score.get(0), score.get(1)));
