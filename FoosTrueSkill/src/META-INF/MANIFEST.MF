@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Class-Path: servlet-api-2.5.jar mongo-2.6.5.jar jetty-plus-7.3.0.v2011
+ 0203.jar jetty-websocket-7.3.0.v20110203.jar jetty-jndi-7.3.0.v201102
+ 03.jar jetty-ajp-7.3.0.v20110203.jar jetty-servlet-7.3.0.v20110203.ja
+ r jetty-continuation-7.3.0.v20110203.jar jetty-deploy-7.3.0.v20110203
+ .jar jetty-util-7.3.0.v20110203.jar jetty-webapp-7.3.0.v20110203.jar
+ jetty-jmx-7.3.0.v20110203.jar jetty-rewrite-7.3.0.v20110203.jar jetty
+ -xml-7.3.0.v20110203.jar jetty-policy-7.3.0.v20110203.jar jetty-clien
+ t-7.3.0.v20110203.jar jetty-http-7.3.0.v20110203.jar jetty-security-7
+ .3.0.v20110203.jar jetty-io-7.3.0.v20110203.jar jetty-server-7.3.0.v2
+ 0110203.jar jetty-servlets-7.3.0.v20110203.jar jetty-annotations-7.3.
+ 0.v20110203.jar
+Main-Class: com.videoplaza.foosball.FoosTrueSkillServer
+

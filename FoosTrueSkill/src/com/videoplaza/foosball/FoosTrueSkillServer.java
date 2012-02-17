@@ -22,18 +22,21 @@ import com.videoplaza.foosball.model.Game;
 public class FoosTrueSkillServer extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
+   private static final String ONE_DAY_IN_SECONDS = "86400";
+
    private FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
    private final NumberFormat nf = NumberFormat.getInstance();
 
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-      String path = req.getPathInfo();
+      addCorsHeaders(req, resp);
 
       Date startDate = FoosballDB.createDate(req.getParameter("startDate"), FoosballDB.DEFAULT_START_DATE);
       Date endDate = FoosballDB.createDate(req.getParameter("endDate"), FoosballDB.DEFAULT_END_DATE);
 
       String output = db.recalculate(startDate, endDate);
 
+      String path = req.getPathInfo();
       PrintWriter writer = resp.getWriter();
       if (path.endsWith("player")) {
          resp.setContentType("application/json");
@@ -57,6 +60,15 @@ public class FoosTrueSkillServer extends HttpServlet {
             writer.println();
          }
       }
+   }
+
+   private void addCorsHeaders(HttpServletRequest req, HttpServletResponse resp) {
+      resp.addHeader("Access-Control-Allow-Origin", "*");
+      resp.addHeader("Access-Control-Allow-Methods", "DELETE, GET, OPTIONS, POST, PUT");
+      String headers = req.getHeader("Access-Control-Request-Headers");
+      if (headers != null)
+         resp.addHeader("Access-Control-Allow-Headers", headers);
+      resp.addHeader("Access-Control-Max-Age", ONE_DAY_IN_SECONDS);
    }
 
    private String num(Map<String, Double> map, String player) {

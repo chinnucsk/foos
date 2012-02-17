@@ -45,7 +45,7 @@
 
   var PlayerList = Backbone.Collection.extend({
     model: Player,
-    url: 'http://rouzbeh.videoplaza.org/foos.php',
+    url: 'http://rouzbeh.videoplaza.org:8080/player',
   });
 
   var PlayerView = Backbone.View.extend({
@@ -115,6 +115,6 @@
   });
 
   var listView = new PlayerListView();
-  
+
   //$('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
 })(jQuery);
