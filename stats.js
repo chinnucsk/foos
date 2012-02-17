@@ -1,4 +1,6 @@
 (function($) {
+  var NEW_TABLE_START_DATE = '1324584000000';
+
   var columns = [
     'Rank',
     'Name',
@@ -43,9 +45,23 @@
     },
   });
 
+  function isChecked(element) {
+    return (element.attr('checked') != undefined && element.attr('checked') == 'checked');
+  }
+
+  function getQueryString() {
+     if (isChecked($('#newTable')))
+       return '?startDate=' + NEW_TABLE_START_DATE;
+
+     if (isChecked($('#oldTable')))
+       return '?endDate=' + NEW_TABLE_START_DATE;
+
+    return '';
+  }
+
   var PlayerList = Backbone.Collection.extend({
     model: Player,
-    url: 'http://rouzbeh.videoplaza.org:8080/player',
+    url: 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(),
   });
 
   var PlayerView = Backbone.View.extend({

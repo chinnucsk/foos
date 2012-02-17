@@ -18,14 +18,19 @@
     </style>
 
     <script src="jquery-1.6.2.min.js"></script>
-    <script src="jquery.tablesorter.min.js"></script> 
+    <script src="jquery.tablesorter.min.js"></script>
     <script src="json2.js"></script>
     <script src="underscore-min.js"></script>
     <script src="backbone-min.js"></script>
   </head>
   <body>
     <h1>Foosball Stats | <a href="index.html">New Game</a></h1>
-    <h2>Players</h2>
+    <p>
+       <button type="button" id="update">Update</button>
+      <input id="newTable" name="games" type="radio" checked="checked" /> New table
+      <input id="oldTable" name="games" type="radio" /> Old table
+       <input id="allGames" name="games" type="radio" /> All games
+    </p>
     <table id="players" class="tablesorter">
       <thead>
         <tr></tr>
