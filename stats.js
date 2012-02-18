@@ -50,12 +50,17 @@
   }
 
   function getQueryString() {
-     if (isChecked($('#newTable')))
-       return '?startDate=' + NEW_TABLE_START_DATE;
+    if (isChecked($('#newTable'))) {
+      console.log('fetching data for new table');
+      return '?startDate=' + NEW_TABLE_START_DATE;
+    }
 
-     if (isChecked($('#oldTable')))
-       return '?endDate=' + NEW_TABLE_START_DATE;
+    if (isChecked($('#oldTable'))) {
+      console.log('fetching data for old table');
+      return '?endDate=' + NEW_TABLE_START_DATE;
+    }
 
+    console.log('fetching data for all games');
     return '';
   }
 
@@ -65,7 +70,6 @@
 
   var PlayerList = Backbone.Collection.extend({
     model: Player,
-    url: getPlayerListUrl(),
   });
 
   var PlayerView = Backbone.View.extend({
@@ -101,7 +105,6 @@
     fetchAndRender: function() {
        this.collection = new PlayerList();
        this.collection.url = getPlayerListUrl();
-       alert('fetching from ' + this.collection.url);
        this.collection.bind('all', this.render, this);
        this.collection.bind('add', this.appendPlayer,this);
        this.collection.bind('refresh', this.render,this);
@@ -118,7 +121,9 @@
     },
 
     events: {
-      'click #update': 'fetchAndRender',
+      'click #newTable': 'fetchAndRender',
+      'click #oldTable': 'fetchAndRender',
+      'click #allGames': 'fetchAndRender',
     },
 
     render: function() {
