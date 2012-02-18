@@ -135,7 +135,7 @@
       _(this.collection.models).each(function(item) {
         this.appendPlayer(item);
       }, this);
-      $('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
+      $('.tablesorter').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
     },
 
     appendPlayer: function(item) {
@@ -149,5 +149,4 @@
 
   var listView = new PlayerListView();
 
-  //$('#players').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
 })(jQuery);
