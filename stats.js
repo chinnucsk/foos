@@ -59,9 +59,13 @@
     return '';
   }
 
+  function getPlayerListUrl() {
+    return 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString();
+  }
+
   var PlayerList = Backbone.Collection.extend({
     model: Player,
-    url: 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(),
+    url: getPlayerListUrl(),
   });
 
   var PlayerView = Backbone.View.extend({
@@ -94,27 +98,40 @@
   var PlayerListView = Backbone.View.extend({
     el: $('#players'),
 
+    fetchAndRender: function() {
+       this.collection = new PlayerList();
+       this.collection.url = getPlayerListUrl();
+       alert('fetching from ' + this.collection.url);
+       this.collection.bind('all', this.render, this);
+       this.collection.bind('add', this.appendPlayer,this);
+       this.collection.bind('refresh', this.render,this);
+       this.collection.fetch({success:function(c,r) {console.log("success" +r);},error:function(c,r) {console.log("FAIL"+r);window.errr=r}});
+       this.counter = 0;
+
+       this.render();
+    },
+
     initialize: function() {
       _.bindAll(this, 'render', 'appendPlayer');
       console.log("initialize");
-      this.collection = new PlayerList();
-      this.collection.bind('all', this.render, this);
-      this.collection.bind('add', this.appendPlayer,this);
-      this.collection.bind('refresh', this.render,this);
-      this.collection.fetch({success:function(c,r) {console.log("success" +r);},error:function(c,r) {console.log("FAIL"+r);window.errr=r}});
-      this.counter = 0;
+      this.fetchAndRender();
+    },
 
-      this.render();
+    events: {
+      'click #update': 'fetchAndRender',
     },
 
     render: function() {
       console.log("rendering collection");
-      this.$('tr','thead').html('');
+      this.$('table').html('');
+      this.$('table').append('<thead></thead>');
+      this.$('thead', 'table').append('<tr></tr>');
       _(columns).each(function(column) {
-        $('tr', 'thead', this.el).append('<th>' + column + '</th>');
+        $('tr', 'thead', 'table', this.el).append('<th>' + column + '</th>');
       }, this);
 
       console.log("rendering items");
+      this.$('table').append('<tbody></tbody>');
       _(this.collection.models).each(function(item) {
         this.appendPlayer(item);
       }, this);
@@ -126,7 +143,7 @@
       var itemView = new PlayerView({
         model: item
       });
-      $('tbody', this.el).append(itemView.render().el);
+      $('tbody', 'table', this.el).append(itemView.render().el);
     }
   });
 
