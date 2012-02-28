@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+{% block head %}
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>El Previo - Foosball stats</title>
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Le styles -->
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.css') }}">
+
+<style>
+  body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  }
+</style>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap-responsive.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='gritter/css/jquery.gritter.css') }}">
+<!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/lionbars.css') }}"> -->
+<!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='tablesorter-blue/style.css') }}"> -->
+<!-- <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery.tablesorter.pager.css') }}"> -->
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/foos.css') }}">
+
+<script src="{{ url_for('static', filename='js/jquery-1.7.min.js') }}"></script>
+<script src="{{ url_for('static', filename='handlebars-1.0.0.beta.4.js') }}"></script>
+<script src="{{ url_for('static', filename='spin.js') }}"></script>
+<script src="{{ url_for('static', filename='spin-jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.tablesorter.pager.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.tablescroll.js') }}"></script>
+<script src="{{ url_for('static', filename='gritter/js/jquery.gritter.min.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/jquery.tinyscrollbar.min.js') }}"></script> -->
+<!-- <script src="{{ url_for('static', filename='js/jquery.lionbars.0.3.min.js') }}"></script> -->
+{% endblock %}
+
+<script>
+
+	$(document).ready(function() {
+		$("#reloadlink").click(function(){ reload('True');});
+		$("#reloadAlllink").click(function(){ reload('');});
+	});     
+	
+	function reload(newMatches) {
+		$('#reloadli').spin();
+		$.ajax({
+	            type:'GET',
+	    		// url:'{# url_for(mod.name + '.get_teams') #}',
+	    		url:'/utils/reload?new='+newMatches,
+				// data: {'new':newMatches},
+		        async:true,
+	            cache:false,
+	            timeout:90000,
+	            success:function (data){
+					offset = parseInt(data.offset);
+					showmessage(data.data.message);
+					$('#reloadli').spin(false);
+	            },
+	            error:function (req,sta,er){
+					showmessage(er);
+					$('#reloadli').spin(false);
+	            },
+	    });
+	}
+	
+	function showmessage(message) {
+		$.gritter.add({
+			// (string | mandatory) the heading of the notification
+			title: 'Yai!',
+			// (string | mandatory) the text inside the notification
+			text: message,
+			// (string | optional) the image to display on the left
+			image: 'http://forums.anandtech.com/customavatars/avatar296629_1.gif',
+			// (bool | optional) if you want it to fade out on its own or just sit there
+			sticky: false,
+			// (int | optional) the time you want it to be alive for before fading out
+			time: ''
+		});
+	}
+
+
+</script>
+
+</head>
+
+<body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Foos stats</a>
+          <!-- <div class="nav-collapse"> -->
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="/">Home</a></li>
+              <li><a href="/teams">Teams</a></li>
+              <li id="reloadli"><a id="reloadlink" href="#">Import new matches</a></li>
+              <li id="reloadli"><a id="reloadAlllink" href="#">Import all matches</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+		<div>{% block body %}{% endblock %}</div>	
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script> -->
+
+</body>
+</html>
+
+

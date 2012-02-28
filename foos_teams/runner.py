@@ -1,0 +1,1 @@
+from foosball import debug

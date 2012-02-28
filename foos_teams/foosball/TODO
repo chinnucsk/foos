@@ -1,0 +1,81 @@
+NEXT FEATURES:
+
+* Create a landing page (in the future, it would be the overview, with the data from foos.php) 
+* In landing page, add two or three interesting numbers like: 
+	- scorer of the week, 
+	- best player last week (w/l ratio), 
+	- and number of matches played last week and total
+* Start the profile page
+* First graphs..
+
+----------------------
+
+* UPDATE the README and INSTALL files
+* email mapping to players for gravatar integration http://en.gravatar.com/site/implement/images/
+* overview page
+* settings page (set email to player)
+* profile page: more numbers. 
+* profile page: graphs 
+http://code.google.com/intl/es-ES/apis/chart/interactive/docs/index.html Google!
+http://www.highcharts.com/documentation/how-to-use / http://g.raphaeljs.com/ / http://mbostock.github.com/protovis/ex/bar.html / http://www.designyourway.net/blog/resources/30-high-quality-charts-and-graphs-for-webdevelopers-to-download/
+* mongoengine with mongodb http://stackoverflow.com/questions/2781682/mongodb-orm-for-python / http://mongoengine.org/docs/v0.4/
+* use less for the CSS (http://sjl.bitbucket.org/flask-lesscss/). Alternatively, sass (with http://compass-style.org/)																																												
+
+* SCRIPT TO AUTOMATE THE DATABASE
+
+STATS TO GET
+
+// overview //
+--------------
+* regular ranking table: JSON from http://rouzbeh.videoplaza.org/foos.php
+* ranking table: show who went up or down based in stats from (one of these or all!):
+  - last week
+  - yesterday
+  - last three days
+* position stats
+  * who's the best goalie (least goals received)
+  * best scorer in what position (player)
+* best comeback
+* blank games (10-0) summary
+* pressure withstanding ratio (first team that reaches 9 goals is the winning team or no) 
+* longest winning streak
+* longest losing streak
+* goals scored during leet time
+
+// teams //
+-----------
+* more info in the ranking table: trueskill average, best starting position
+TODO: ranking column based in w/l ratio and games played OR just build a ranking column that doesn't change
+* less than three matches teams filtered out by default. Checkbox to show them all.
+
+// personal profile //
+----------------------
+* ranking
+* played
+* wins / loses
+* winning pctg
+* goals and goals per game
+* teammates. Sort by result
+* trueskill, mu and sigma (get from foos.php json)
+* best position (notify if you are the best in that position)
+* left/right handed ratio
+* best time for playing (personal)
+* progress graph for goals per match, trueskill and w/l ratio (mountain graphs)
+* longest winning streak (personal)
+* longest losing streak (personal)
+
+// comparison //
+----------------
+* regular stats in fancy graphics
+* times teammates
+* times confronted and w/l ratio
+* last match teammate result
+* last match confronted result
+
+
+DESIRED FEATURES
+
+* compare two players
+* activity heatmap (office layout)
+* best goals in a streak per team
+* best goals in a streak per team member

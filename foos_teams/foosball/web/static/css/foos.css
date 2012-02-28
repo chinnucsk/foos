@@ -1,0 +1,49 @@
+.scroll{
+	height:300px;
+	overflow: auto;
+	display:block;
+	max-width:99%;
+}
+
+.table-condensed td {
+	padding: 2px 5px;
+}
+
+.input-short {
+  	height: 13px;
+	line-height: 13px;
+}
+
+.button-short {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.heading {
+	font-size: medium;
+	font-weight: bold;
+	padding-right: 20px;
+}
+
+.player-filter {
+	margin-right: 10px;
+/*	vertical-align: baseline;*/
+}
+
+tbody {
+	width:100%;
+	clear: both;
+}
+table { clear: both }
+
+th.headerSortUp { 
+    background-image: url(../tablesorter-blue/asc.gif); 
+	background-repeat:no-repeat;
+	background-position:right top;
+}
+
+th.headerSortDown { 
+    background-image: url(../tablesorter-blue/desc.gif); 
+	background-repeat:no-repeat;
+	background-position:right top;
+}

@@ -1,0 +1,20 @@
+README
+======
+First, install DB, tables and functionss
+TODO
+
+Then, install the app
+(python setup.py install)
+
+Before running the app:
+1. launch mongo (or point to rouzbeh.videoplaza.org)
+2. launch postgres
+3. run the app in debug mode
+python foosball/debug.py
+
+it will point to localhost:3031
+
+TODO
+For production:
+- nginx
+- uwsgi

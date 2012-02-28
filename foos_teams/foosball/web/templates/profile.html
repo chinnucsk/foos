@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <script>
+		// Animate the element's value from 0% to 110%:
+		$(document).ready(function() {
+			$('#totalgoals').myanimate({{ personal_stats.total_goals }});
+			$('#gamesplayed').myanimate({{ personal_stats.games_played }});
+		});
+</script>
+
+
+<div class="left">
+<!-- <img src="{{ url_for('static', filename='img/avatar.jpg') }}" alt="avatar" /> -->
+<img src="{{ avatar_url }}" alt="avatar" />
+</div>
+
+<div class="right">
+	<h3>TOTAL GOALS <span id="totalgoals"></span> </h3>
+	<p>Games played <span id="gamesplayed"></span> </p>
+</div>
+
+<div id="content"></div>
+
+<br class="clearit" />
+{% endblock %}

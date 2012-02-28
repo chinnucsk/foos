@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:Screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://wireframesketcher.com/1.0/model.ecore">
+  <widgets xsi:type="model:Browser" id="1" x="24" y="16" width="809" height="537" text="Browser&#xA;http://..." measuredWidth="809" measuredHeight="537"/>
+  <widgets xsi:type="model:Placeholder" id="6" x="56" y="168" width="169" height="153" text="AVATAR" measuredWidth="169" measuredHeight="153"/>
+  <widgets xsi:type="model:Placeholder" id="7" x="56" y="78" width="601" height="75" text="el previo (logo)" measuredWidth="601" measuredHeight="75"/>
+  <widgets xsi:type="model:Panel" id="8" x="240" y="168" width="561" height="153" measuredWidth="561" measuredHeight="153"/>
+  <widgets xsi:type="model:Panel" id="9" x="56" y="336" width="745" height="161" measuredWidth="745" measuredHeight="161"/>
+  <widgets xsi:type="model:Note" id="10" x="264" y="208" width="169" height="41" text="important facts. Big font" measuredWidth="169" measuredHeight="41" annotation="true">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Note" id="11" x="288" y="416" width="169" height="41" text="other facts. Tabbed interface?" measuredWidth="169" measuredHeight="41" annotation="true">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:Chart" id="12" x="616" y="184" width="121" height="121" measuredWidth="121" measuredHeight="121"/>
+  <widgets xsi:type="model:Note" id="13" x="496" y="248" width="121" height="25" text="charts" measuredWidth="121" measuredHeight="25" annotation="true">
+    <font/>
+  </widgets>
+  <widgets xsi:type="model:ButtonBar" id="14" x="667" y="78" text="Overview, Settings" measuredWidth="134" measuredHeight="23" selection="0">
+    <font/>
+    <items x="0" y="0" width="70" height="23" text="Overview"/>
+    <items x="70" y="0" width="64" height="23" text="Settings"/>
+  </widgets>
+  <hRuler/>
+  <vRuler/>
+  <font/>
+</model:Screen>

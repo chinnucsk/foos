@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <script>
+		// $(document).ready(function() {
+		// 	$('#content').spin();
+		// 	
+		// 	$.ajax({
+		//                     type:'POST',
+		//             		url:'{{ url_for(mod.name + '.getteamresults') }}',
+		// 	        async:true,
+		//                     cache:false,
+		//                     timeout:100000,
+		//                     success:function (data){
+		//                             offset = parseInt(data.offset);
+		//                             $.each(data.data,function (i,v){
+		// 						ratio = v[1]['ratio'];
+		// 						playerone = v[1]['playerone'];
+		// 						playertwo = v[1]['playertwo'];
+		// 						win = v[1]['win'];
+		// 						lose = v[1]['lose'];
+		// 						played = v[1]['played'];
+		// 						$('#content').prepend(
+		// 							'' + playerone + '/' + playertwo +
+		// 							'\t\t\twin '+ win + '\tlose ' + lose + 
+		// 							'\tplayed '+ played +'\t\tratio ' + ratio + '\n');
+		//                             });
+		// 					$('#content').spin(false);
+		//                     },
+		//                     error:function (req,sta,er){
+		//                         alert(er);
+		// 				$('#content').spin(false);
+		//                     },
+		//             });
+		// });
+		
+</script>
+
+<div>
+	<h3>Some more Foos stats</h3>
+	<pre id="content">
+	</pre>
+	<div class="well">
+		Nothing to see here for now. Head on to the <a href="/teams">teams section</a> for the juicy stuff
+	</div>
+	
+</div>    
+{% endblock %}
