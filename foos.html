@@ -95,8 +95,8 @@ var goal = function (team, pos) {
             for (t in tallyList) tallyText += tallyList[t].name + "=" + tallyList[t].score + ", ";
             $("#log").text(tallyText.substr(0, tallyText.length - 2));
 
-            $("#team00").val(game.teams[losing_team][1]);
-            $("#team01").val(game.teams[losing_team][0]);
+            $("#team" + losing_team + "0").val(game.teams[losing_team][1]);
+            $("#team" + losing_team + "1").val(game.teams[losing_team][0]);
             $("#start-game").text("rematch!");
             $("#start-test-game").text("test rematch");
             $("#game-select").removeClass("hide");
