@@ -183,8 +183,12 @@ $(function () {
         startGameWithPlayers(hash);
     }
     ;
+    var isRematch = function () {
+        return $("#start-game").text().match(/rematch/);
+    };
+
     var startGame = function () {
-        if ($("#start-game").text().match(/rematch/)) {
+        if (isRematch()) {
             alert("Losers switch!")
         }
 
