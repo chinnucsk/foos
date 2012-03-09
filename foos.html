@@ -184,6 +184,10 @@ $(function () {
     }
     ;
     var startGame = function () {
+        if ($("#start-game").text().match(/rematch/)) {
+            alert("Losers switch!")
+        }
+
         var players = [
             $("#team00n").val().length ? $("#team00n").val() : $("#team00").val(),
             $("#team01n").val().length ? $("#team01n").val() : $("#team01").val(),
