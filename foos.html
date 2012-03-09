@@ -22,6 +22,458 @@ var teams;
 var switched = false;
 var ownGoal = false;
 var players = [];
+var trueskillData = [
+{
+rank: 1,
+name: "Rouzbeh",
+trueskill: 31.243,
+mu: 34.4003,
+sigma: 1.0524,
+wins: 155,
+losses: 79,
+goals: 1297
+},
+{
+rank: 2,
+name: "Jakob",
+trueskill: 25.9622,
+mu: 29.0528,
+sigma: 1.0302,
+wins: 131,
+losses: 98,
+goals: 1000
+},
+{
+rank: 3,
+name: "Bergman",
+trueskill: 25.7999,
+mu: 28.9062,
+sigma: 1.0354,
+wins: 123,
+losses: 118,
+goals: 1066
+},
+{
+rank: 4,
+name: "Jesper",
+trueskill: 25.4458,
+mu: 28.4302,
+sigma: 0.9948,
+wins: 185,
+losses: 137,
+goals: 1528
+},
+{
+rank: 5,
+name: "Sarnelid",
+trueskill: 25.0062,
+mu: 28.7275,
+sigma: 1.2404,
+wins: 69,
+losses: 51,
+goals: 556
+},
+{
+rank: 6,
+name: "Alfred",
+trueskill: 23.6658,
+mu: 27.2449,
+sigma: 1.193,
+wins: 81,
+losses: 56,
+goals: 719
+},
+{
+rank: 7,
+name: "Alex",
+trueskill: 22.8744,
+mu: 26.3021,
+sigma: 1.1426,
+wins: 82,
+losses: 65,
+goals: 663
+},
+{
+rank: 8,
+name: "Hedenius",
+trueskill: 22.6635,
+mu: 25.7374,
+sigma: 1.0246,
+wins: 101,
+losses: 108,
+goals: 900
+},
+{
+rank: 9,
+name: "Blake",
+trueskill: 22.661,
+mu: 25.5889,
+sigma: 0.9759,
+wins: 142,
+losses: 123,
+goals: 1273
+},
+{
+rank: 10,
+name: "Erik",
+trueskill: 22.5433,
+mu: 25.7105,
+sigma: 1.0557,
+wins: 109,
+losses: 88,
+goals: 914
+},
+{
+rank: 11,
+name: "Michael",
+trueskill: 21.9754,
+mu: 24.8648,
+sigma: 0.9631,
+wins: 196,
+losses: 199,
+goals: 1622
+},
+{
+rank: 12,
+name: "Nic",
+trueskill: 20.883,
+mu: 29.5654,
+sigma: 2.8941,
+wins: 13,
+losses: 5,
+goals: 80
+},
+{
+rank: 13,
+name: "Haseeb",
+trueskill: 20.5816,
+mu: 23.5557,
+sigma: 0.9914,
+wins: 135,
+losses: 133,
+goals: 1112
+},
+{
+rank: 14,
+name: "Pablo",
+trueskill: 19.3938,
+mu: 22.3018,
+sigma: 0.9693,
+wins: 191,
+losses: 197,
+goals: 1414
+},
+{
+rank: 15,
+name: "Nils",
+trueskill: 18.886,
+mu: 22.1724,
+sigma: 1.0954,
+wins: 89,
+losses: 88,
+goals: 879
+},
+{
+rank: 16,
+name: "Hamrin",
+trueskill: 18.7068,
+mu: 24.1325,
+sigma: 1.8085,
+wins: 25,
+losses: 21,
+goals: 212
+},
+{
+rank: 17,
+name: "Joshua",
+trueskill: 18.3566,
+mu: 21.257,
+sigma: 0.9668,
+wins: 241,
+losses: 299,
+goals: 2069
+},
+{
+rank: 18,
+name: "Per-Anders",
+trueskill: 18.3107,
+mu: 21.9474,
+sigma: 1.2122,
+wins: 53,
+losses: 68,
+goals: 411
+},
+{
+rank: 19,
+name: "Björn",
+trueskill: 17.5652,
+mu: 21.1798,
+sigma: 1.2049,
+wins: 58,
+losses: 67,
+goals: 472
+},
+{
+rank: 20,
+name: "Geries",
+trueskill: 16.2953,
+mu: 19.2989,
+sigma: 1.0012,
+wins: 147,
+losses: 190,
+goals: 1090
+},
+{
+rank: 21,
+name: "Nelson",
+trueskill: 15.8811,
+mu: 18.9162,
+sigma: 1.0117,
+wins: 129,
+losses: 127,
+goals: 824
+},
+{
+rank: 22,
+name: "Tobias",
+trueskill: 15.7309,
+mu: 26.3268,
+sigma: 3.532,
+wins: 9,
+losses: 3,
+goals: 52
+},
+{
+rank: 23,
+name: "Marcus",
+trueskill: 15.0541,
+mu: 24.773,
+sigma: 3.2397,
+wins: 7,
+losses: 5,
+goals: 35
+},
+{
+rank: 24,
+name: "Jonas",
+trueskill: 14.7029,
+mu: 21.3388,
+sigma: 2.212,
+wins: 15,
+losses: 15,
+goals: 112
+},
+{
+rank: 25,
+name: "toma",
+trueskill: 11.9592,
+mu: 17.5374,
+sigma: 1.8594,
+wins: 20,
+losses: 22,
+goals: 134
+},
+{
+rank: 26,
+name: "Owen",
+trueskill: 11.6209,
+mu: 14.7293,
+sigma: 1.0361,
+wins: 87,
+losses: 133,
+goals: 659
+},
+{
+rank: 27,
+name: "Elin",
+trueskill: 10.5862,
+mu: 17.4293,
+sigma: 2.281,
+wins: 11,
+losses: 25,
+goals: 116
+},
+{
+rank: 28,
+name: "Yonathan",
+trueskill: 10.0786,
+mu: 16.4221,
+sigma: 2.1145,
+wins: 14,
+losses: 19,
+goals: 70
+},
+{
+rank: 29,
+name: "Manuel",
+trueskill: 8.6169,
+mu: 12.6749,
+sigma: 1.3527,
+wins: 28,
+losses: 72,
+goals: 262
+},
+{
+rank: 30,
+name: "Caroline",
+trueskill: 7.6695,
+mu: 29.9659,
+sigma: 7.4322,
+wins: 1,
+losses: 0,
+goals: 2
+},
+{
+rank: 31,
+name: "Sebastian",
+trueskill: 6.7782,
+mu: 25.4885,
+sigma: 6.2368,
+wins: 1,
+losses: 1,
+goals: 7
+},
+{
+rank: 32,
+name: "James",
+trueskill: 4.7411,
+mu: 9.5878,
+sigma: 1.6156,
+wins: 16,
+losses: 42,
+goals: 124
+},
+{
+rank: 33,
+name: "Sorosh",
+trueskill: 3.4567,
+mu: 21.5749,
+sigma: 6.0394,
+wins: 2,
+losses: 1,
+goals: 7
+},
+{
+rank: 34,
+name: "Cagri",
+trueskill: 3.3377,
+mu: 26.3291,
+sigma: 7.6638,
+wins: 1,
+losses: 0,
+goals: 4
+},
+{
+rank: 35,
+name: "Fredrik",
+trueskill: 2.2335,
+mu: 19.99,
+sigma: 5.9188,
+wins: 1,
+losses: 3,
+goals: 8
+},
+{
+rank: 36,
+name: "Nick",
+trueskill: 1.9951,
+mu: 19.7617,
+sigma: 5.9222,
+wins: 1,
+losses: 1,
+goals: 8
+},
+{
+rank: 37,
+name: "Beer",
+trueskill: 0,
+mu: 25,
+sigma: 8.3333,
+wins: 1,
+losses: 0,
+goals: 0
+},
+{
+rank: 38,
+name: "Matin",
+trueskill: 0,
+mu: 25,
+sigma: 8.3333,
+wins: 0,
+losses: 0,
+goals: 0
+},
+{
+rank: 39,
+name: "Molgan",
+trueskill: 0,
+mu: 25,
+sigma: 8.3333,
+wins: 0,
+losses: 0,
+goals: 0
+},
+{
+rank: 40,
+name: "Timh",
+trueskill: 0,
+mu: 25,
+sigma: 8.3333,
+wins: 0,
+losses: 0,
+goals: 0
+},
+{
+rank: 41,
+name: "Dalle Bambuser",
+trueskill: -0.1569,
+mu: 15.4112,
+sigma: 5.1894,
+wins: 1,
+losses: 3,
+goals: 14
+},
+{
+rank: 42,
+name: "Ermin",
+trueskill: -0.7052,
+mu: 19.6391,
+sigma: 6.7814,
+wins: 2,
+losses: 2,
+goals: 13
+},
+{
+rank: 43,
+name: "Lukas",
+trueskill: -1.155,
+mu: 18.4183,
+sigma: 6.5244,
+wins: 0,
+losses: 2,
+goals: 4
+},
+{
+rank: 44,
+name: "Dante",
+trueskill: -2.2624,
+mu: 20.0341,
+sigma: 7.4322,
+wins: 0,
+losses: 1,
+goals: 0
+},
+{
+rank: 45,
+name: "Zenia",
+trueskill: -2.4625,
+mu: 10.4497,
+sigma: 4.3041,
+wins: 1,
+losses: 7,
+goals: 6
+}
+];
 
 var updateStats = function (game) {
     for (team in teams)
@@ -145,12 +597,19 @@ var updateOG = function () {
 };
 
 $(function () {
+    var getTrueSkillUri = 'http://localhost:8080/player';
+
     Foos.setHost('http://rouzbeh.videoplaza.org/foos/');
     setupCircles("w", 0);
     setupCircles("b", 1);
+
+    var getPlayerLi = function (player) {
+        return '<li class="player" data-player="' + player + '">' + player + '</li>';
+    };
+
     Foos.getPlayers(function (players) {
         $.each(players, function (i, player) {
-            $('ul#playerlist').append('<li class="player" data-player="' + player + '">' + player + '</li>');
+            $('ul#playerlist').append(getPlayerLi(player));
         });
         var x = [0, 1];
         for (p in players) {
@@ -187,18 +646,87 @@ $(function () {
         return $("#start-game").text().match(/rematch/);
     };
 
-    var startGame = function () {
-        if (isRematch()) {
-            alert("Losers switch!")
-        }
-
-        var players = [
+    var getPlayers = function () {
+        return [
             $("#team00n").val().length ? $("#team00n").val() : $("#team00").val(),
             $("#team01n").val().length ? $("#team01n").val() : $("#team01").val(),
             $("#team10n").val().length ? $("#team10n").val() : $("#team10").val(),
             $("#team11n").val().length ? $("#team11n").val() : $("#team11").val()
         ]
-        startGameWithPlayers(players);
+    };
+
+    var doTeamsOverlap = function(team0, team1) {
+        $.each(team0, function(i, val) {
+            if (team1.indexOf(val)) {
+                return true;
+            }
+        });
+
+        return false;
+    };
+
+    var getBestTeams = function(selectedPlayers, skillFor) {
+        var teamForSkill = {};
+        for (var i = 0; i < selectedPlayers.length; i++) {
+            for (var j = i + 1; j < selectedPlayers.length; j++) {
+                teamForSkill[(skillFor[selectedPlayers[i]] + skillFor[selectedPlayers[j]]) / 2] = [i, j];
+            }
+        }
+
+        var bestTeams = [];
+        var lowestDelta = 99999.0;
+        $.each(teamForSkill, function(key0, val0) {
+            $.each(teamForSkill, function(key1, val1) {
+                if (key0 == key1 || doTeamsOverlap(val0, val1)) {
+                    return;
+                }
+
+                var delta = Math.abs(key0 - key1);
+                if (delta < lowestDelta) {
+                    bestTeams = [val0, val1];
+                    lowestDelta = delta;
+                }
+            });
+        });
+
+        return bestTeams;
+   };
+
+    var suggestTeams = function () {
+        var playerList = $("ul#playerlist");
+        var suggestion = $("#team-suggestion");
+
+        playerList.hide();
+        $("#game-select").hide();
+        suggestion.show();
+
+        $.get(getTrueSkillUri, function (data) {
+            var skillFor = {};
+            $.each(data, function (i, val) {
+                skillFor[val.name] = val.trueskill;
+            });
+
+            playerList.empty();
+            var selectedPlayers = getPlayers();
+            $.each(selectedPlayers, function (i, player) {
+                playerList.append(getPlayerLi(player));
+            });
+
+            bestTeams = getBestTeams(selectedPlayers, skillFor);
+
+            suggestion.empty();
+            suggestion.append("<p>" + selectedPlayers[0] + " and " + selectedPlayers[1] + ": " +
+                    ((skillFor[selectedPlayers[0]] + skillFor[selectedPlayers[1]]) / 2) + "</p>");
+            playerList.show();
+        });
+    };
+
+    var startGame = function () {
+        if (isRematch()) {
+            alert("Losers switch!")
+        }
+
+        startGameWithPlayers(getPlayers());
     };
     $("#oldschool").click(function () {
         $("ul#playerlist").addClass('hide');
@@ -215,6 +743,10 @@ $(function () {
             FoosSetCL('game');
             startGameWithPlayers(players);
         }
+    });
+    $("#suggest-teams").click(function () {
+        FoosSetCL('game');
+        suggestTeams();
     });
     $("#start-game").click(function () {
         FoosSetCL('game');
@@ -304,6 +836,9 @@ $(function () {
     <p id="log">...</p>
 </div>
 <button id="oldschool">TAKE ME BACK!</button>
+<div id="team-suggestion" class="hide">
+    <h2>waiting for team suggestion...</h2>
+</div>
 <ul id="playerlist"></ul>
 <div id="game-select" class="hide">
     <h2>team select</h2>
@@ -330,8 +865,12 @@ $(function () {
     <input id="team11n" type="text"/>
 
     <div style="clear:both;"></div>
-    <h1><a href="#" id="start-game">start game</a> | <a href="#" id="start-test-game">test game</a> | <a
-            href="stats.html">stats</a></h1>
+    <h1>
+        <a href="#" id="suggest-teams">suggest teams</a> | <a href="#" id="start-game">start game</a> |
+        <a href="#" id="start-test-game">test game</a>
+    </h1>
+
+    <h1><a href="stats.html">stats</a></h1>
 </div>
 </body>
 </html>
