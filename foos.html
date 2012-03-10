@@ -96,9 +96,12 @@ var goal = function (team, pos) {
 
          $("#team" + losing_team + "0").val(game.teams[losing_team][1]);
          $("#team" + losing_team + "1").val(game.teams[losing_team][0]);
+         $("#team" + winning_team + "0").val(game.teams[winning_team][0]);
+         $("#team" + winning_team + "1").val(game.teams[winning_team][1]);
+
          $("#start-game").text("rematch!");
          $("#start-test-game").text("test rematch");
-         $("#game-select").removeClass("hide");
+         $("#game-select").show("hide");
       }
    });
 
@@ -174,8 +177,8 @@ $(function () {
                updateStats(game);
                $("#log").text("...");
                $("#score").text("0 - 0");
-               $("#game-select").addClass("hide");
-               $("#gamepan").removeClass("hide");
+               $("#game-select").hide();
+               $("#gamepan").show();
             });
          });
    };
@@ -194,6 +197,13 @@ $(function () {
       return [
          $("#team00n").val().length ? $("#team00n").val() : $("#team00").val(), $("#team01n").val().length ? $("#team01n").val() : $("#team01").val(), $("#team10n").val().length ? $("#team10n").val() : $("#team10").val(), $("#team11n").val().length ? $("#team11n").val() : $("#team11").val()
       ]
+   };
+
+   var setPlayers = function (selectedPlayers) {
+      $("#team00").val(selectedPlayers[0]);
+      $("#team01").val(selectedPlayers[1]);
+      $("#team10").val(selectedPlayers[2]);
+      $("#team11").val(selectedPlayers[3]);
    };
 
    var doTeamsOverlap = function (team0, team1) {
@@ -238,12 +248,16 @@ $(function () {
       var NEW_TABLE_START_DATE = '1324584000000';
       var GET_TRUESKILL_URI = 'http://localhost:8080/player?startDate=' + NEW_TABLE_START_DATE;
 
-      var playerList = $("ul#playerlist");
-      var suggestion = $("#team-suggestion");
+      // Reset new-school player selections
+      players = [];
 
-      playerList.hide();
+      var playerListElement = $("ul#playerlist");
+      var suggestionElement = $("#team-suggestion");
+
+      playerListElement.hide();
+      $("#gamepan").hide();
       $("#game-select").hide();
-      suggestion.show();
+      suggestionElement.show();
 
       $.get(GET_TRUESKILL_URI, function (data) {
          var skillFor = {};
@@ -258,18 +272,18 @@ $(function () {
          var t1p0 = selectedPlayers[bestTeams[1][0]];
          var t1p1 = selectedPlayers[bestTeams[1][1]];
 
-         suggestion.empty();
-         suggestion.append("<p>" + t0p0 + " and " + t0p1 + ": " +
+         suggestionElement.empty();
+         suggestionElement.append("<p>" + t0p0 + " and " + t0p1 + ": " +
             ((skillFor[t0p0] + skillFor[t0p1]) / 2) + "</p>");
-         suggestion.append("<p>" + t1p0 + " and " + t1p1 + ": " +
+         suggestionElement.append("<p>" + t1p0 + " and " + t1p1 + ": " +
             ((skillFor[t1p0] + skillFor[t1p1]) / 2) + "</p>");
 
-         playerList.empty();
-         playerList.append(getPlayerLi(t0p0));
-         playerList.append(getPlayerLi(t0p1));
-         playerList.append(getPlayerLi(t1p0));
-         playerList.append(getPlayerLi(t1p1));
-         playerList.show();
+         playerListElement.empty();
+         playerListElement.append(getPlayerLi(t0p0));
+         playerListElement.append(getPlayerLi(t0p1));
+         playerListElement.append(getPlayerLi(t1p0));
+         playerListElement.append(getPlayerLi(t1p1));
+         playerListElement.show();
       });
    };
 
@@ -290,14 +304,21 @@ $(function () {
       players.push(player.data('player'));
       player.append('<span class="number">' + players.length + '</span>');
       if (players.length == 4) {
-         $("ul#playerlist").hide();
-         $("#oldschool").addClass('hide');
-         FoosSetCL('game');
-         startGameWithPlayers(players);
+         var teamSuggestionElement = $("#team-suggestion");
+         if (teamSuggestionElement.is(":visible")) {
+            teamSuggestionElement.hide();
+            $("ul#playerlist").hide();
+            $("#oldschool").addClass('hide');
+            FoosSetCL('game');
+            FoosSetCL('game_test');
+            startGameWithPlayers(players);
+         } else {
+            setPlayers(players);
+            suggestTeams();
+         }
       }
    });
    $("#suggest-teams").click(function () {
-      FoosSetCL('game');
       suggestTeams();
    });
    $("#start-game").click(function () {
