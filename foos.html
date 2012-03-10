@@ -295,9 +295,10 @@ $(function () {
       startGameWithPlayers(getPlayers());
    };
    $("#oldschool").click(function () {
-      $("ul#playerlist").addClass('hide');
-      $("#game-select").removeClass('hide');
-      $("#oldschool").addClass('hide');
+      $("ul#playerlist").hide();
+      $("#game-select").show();
+      $("#oldschool").hide();
+      $("#team-suggestion").hide();
    });
    $("ul#playerlist").click(function (e) {
       var player = $(e.target);
