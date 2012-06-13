@@ -1,4 +1,11 @@
 (function($) {
+  var Mode = {
+    ALL_GAMES : 'allGames',
+    NEW_TABLE : 'newTable',
+    OLD_TABLE : 'oldTable',
+    TODAY : 'today',
+  }
+
   var NEW_TABLE_START_DATE = '1324584000000';
 
   var columns = [
@@ -49,13 +56,21 @@
     return (element.attr('checked') != undefined && element.attr('checked') == 'checked');
   }
 
-  function getQueryString() {
-    if (isChecked($('#newTable'))) {
+  function mode() {
+    if (isChecked($('#newTable'))) return Mode.NEW_TABLE;
+    if (isChecked($('#oldTable'))) return Mode.OLD_TABLE;
+    if (isChecked($('#today'))) return Mode.TODAY;
+
+    return Mode.ALL_GAMES;
+  }
+
+  function getQueryString(mode) {
+    if (mode == Mode.NEW_TABLE) {
       console.log('fetching data for new table');
       return '?startDate=' + NEW_TABLE_START_DATE;
     }
 
-    if (isChecked($('#oldTable'))) {
+    if (mode == Mode.OLD_TABLE) {
       console.log('fetching data for old table');
       return '?endDate=' + NEW_TABLE_START_DATE;
     }
@@ -64,8 +79,8 @@
     return '';
   }
 
-  function getPlayerListUrl() {
-    return 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString();
+  function getPlayerListUrl(mode) {
+    return 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(mode);
   }
 
   var PlayerList = Backbone.Collection.extend({
@@ -104,14 +119,14 @@
 
     fetchAndRender: function() {
        this.collection = new PlayerList();
-       this.collection.url = getPlayerListUrl();
-       this.collection.bind('all', this.render, this);
-       this.collection.bind('add', this.appendPlayer,this);
-       this.collection.bind('refresh', this.render,this);
+       this.collection.url = getPlayerListUrl(mode());
        this.collection.fetch({success:function(c,r) {console.log("success" +r);},error:function(c,r) {console.log("FAIL"+r);window.errr=r}});
        this.counter = 0;
 
-       this.render();
+       this.collection.bind('add', this.appendPlayer,this);
+       
+       this.collection.bind('all', this.render, this);
+       this.collection.bind('refresh', this.render,this);
     },
 
     initialize: function() {
