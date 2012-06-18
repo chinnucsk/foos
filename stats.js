@@ -4,9 +4,10 @@
     NEW_TABLE : 'newTable',
     OLD_TABLE : 'oldTable',
     TODAY : 'today',
-  }
+  };
 
-  var NEW_TABLE_START_DATE = '1324584000000';
+  var DEFAULT_MODE = Mode.NEW_TABLE;
+  var DEFAULT_START_DATE = '1324584000000';
 
   var columns = [
     'Rank',
@@ -56,7 +57,7 @@
     return (element.attr('checked') != undefined && element.attr('checked') == 'checked');
   }
 
-  function mode() {
+  function getMode() {
     if (isChecked($('#newTable'))) return Mode.NEW_TABLE;
     if (isChecked($('#oldTable'))) return Mode.OLD_TABLE;
     if (isChecked($('#today'))) return Mode.TODAY;
@@ -67,12 +68,12 @@
   function getQueryString(mode) {
     if (mode == Mode.NEW_TABLE) {
       console.log('fetching data for new table');
-      return '?startDate=' + NEW_TABLE_START_DATE;
+      return '?startDate=' + DEFAULT_START_DATE;
     }
 
     if (mode == Mode.OLD_TABLE) {
       console.log('fetching data for old table');
-      return '?endDate=' + NEW_TABLE_START_DATE;
+      return '?endDate=' + DEFAULT_START_DATE;
     }
 
     console.log('fetching data for all games');
@@ -118,19 +119,34 @@
     el: $('#players'),
 
     fetchAndRender: function() {
+       var mode = getMode();
+
        this.collection = new PlayerList();
-       this.collection.url = getPlayerListUrl(mode());
-       this.collection.fetch({success:function(c,r) {console.log("success" +r);},error:function(c,r) {console.log("FAIL"+r);window.errr=r}});
+       this.collection.url = getPlayerListUrl(mode == Mode.TODAY ? DEFAULT_MODE : mode);
+
+       var view = this;
+       this.collection.fetch({
+          success: function(c,r) {
+             if (mode == Mode.TODAY)
+                view.leaderBoard(view, c);
+          },
+          error: function(c,r) {
+             console.log("FAIL"+r);
+             window.err=r;
+          }
+       });
        this.counter = 0;
 
-       this.collection.bind('add', this.appendPlayer,this);
-       
-       this.collection.bind('all', this.render, this);
-       this.collection.bind('refresh', this.render,this);
+       // Stats for today are displayed differently, so don't render the table on load
+       if (mode != Mode.TODAY) {
+          this.collection.bind('add', this.appendPlayer,this);
+          this.collection.bind('all', this.render, this);
+          this.collection.bind('refresh', this.render,this);
+       }
     },
 
     initialize: function() {
-      _.bindAll(this, 'render', 'appendPlayer');
+      _.bindAll(this, 'render', 'appendPlayer', 'leaderBoard');
       console.log("initialize");
       this.fetchAndRender();
     },
@@ -139,6 +155,7 @@
       'click #newTable': 'fetchAndRender',
       'click #oldTable': 'fetchAndRender',
       'click #allGames': 'fetchAndRender',
+      'click #today': 'fetchAndRender',
     },
 
     render: function() {
@@ -156,6 +173,15 @@
         this.appendPlayer(item);
       }, this);
       $('.tablesorter').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
+    },
+
+    leaderBoard: function(view, c) {
+       var allGames = new Backbone.Collection();
+       c.each(function(playerModel) {
+          allGames.add(new Backbone.Model(playerModel.toJSON()));
+       });
+
+       view.render();
     },
 
     appendPlayer: function(item) {
