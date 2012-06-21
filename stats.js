@@ -95,8 +95,8 @@
     }
 
     if (mode == Mode.TODAY) {
-      console.log('fetching data for today');
-      return '?startDate=' + startOfDay(new Date());
+      console.log('fetching data up until today');
+      return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfDay(new Date());
     }
 
     console.log('fetching data for all games');
@@ -234,13 +234,13 @@
        });
     },
 
-    calculateLeaderBoard: function(view, allGames, periodGames) {
+    calculateLeaderBoard: function(view, allGames, gamesExcludingPeriod) {
        var leaders = new Backbone.Collection();
-       periodGames.each(function(player) {
+       gamesExcludingPeriod.each(function(player) {
           var one = findPlayer(allGames, player.get('name'));
           var delta = playerDelta(one, player);
           if (delta.get('games_played') > 0)
-             leaders.add();
+             leaders.add(delta);
        });
 
        // TODO: fix rank
