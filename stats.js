@@ -84,6 +84,15 @@
     return 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(mode);
   }
 
+  function copyCollection(orig) {
+     var copy = new Backbone.Collection();
+     orig.each(function(model) {
+        copy.add(new Backbone.Model(model.toJSON()));
+     });
+
+     return copy;
+  }
+
   var PlayerList = Backbone.Collection.extend({
     model: Player,
   });
@@ -176,10 +185,7 @@
     },
 
     leaderBoard: function(view, c) {
-       var allGames = new Backbone.Collection();
-       c.each(function(playerModel) {
-          allGames.add(new Backbone.Model(playerModel.toJSON()));
-       });
+       var allGames = copyCollection(c);
 
        view.render();
     },
