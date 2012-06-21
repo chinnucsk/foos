@@ -23,6 +23,8 @@
     'sigma',
   ];
 
+  var leaderboardColumns = _.reject(columns, function(column) { return column == 'mu' || column == 'sigma' });
+
   var attrFrom = function(column) {
     return column.toLowerCase().replace(/ /g, '_');
   };
@@ -219,6 +221,14 @@
       $('.tablesorter').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
     },
 
+    appendPlayer: function(item) {
+      console.log("appendPlayer");
+      var itemView = new PlayerView({
+        model: item
+      });
+      $('tbody', 'table', this.el).append(itemView.render().el);
+    },
+
     leaderBoard: function(view, c) {
        var allGames = copyCollection(c);
 
@@ -243,16 +253,33 @@
              leaders.add(delta);
        });
 
-       // TODO: fix rank
-       var foo = 1; /// DEBUGGERY
+       leaders.models = _.sortBy(leaders.models, function(leader) { return leader.get('trueskill') * -1 }); // sort descending
+       leaders.each(function(leader, index) { leader.attributes.rank = index + 1 });
+       view.renderLeaderBoard(view, leaders);
     },
 
-    appendPlayer: function(item) {
-      console.log("appendPlayer");
-      var itemView = new PlayerView({
-        model: item
-      });
-      $('tbody', 'table', this.el).append(itemView.render().el);
+    renderLeaderBoard: function(view, leaders) {
+       console.log("rendering leaderboard");
+       var table = $('table');
+       table.html('');
+
+       var header = $('<thead />');
+       var headerRow = $('<tr />');
+       _.each(leaderboardColumns, function(column) { headerRow.append('<th>' + column + '</th>') });
+       header.append(headerRow);
+
+       console.log("rendering leaders");
+       var body = $('<tbody />');
+       _.each(leaders.models, function(leader) { view.appendLeader(body, leader) });
+
+       table.append(header);
+       table.append(body);
+    },
+
+    appendLeader: function(element, leader) {
+       var row = $('<tr />');
+       _.each(leaderboardColumns, function(column) { row.append('<td>' + leader.get(attrFrom(column)) + '</td>') });
+       element.append(row);
     }
   });
 
