@@ -80,8 +80,7 @@
   }
 
   function startOfDay(date) {
-     var start = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 4, 0, 0, 0, 0); /// DEBUGGERY
-     ///var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+     var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
      return start.getTime();
   }
 
