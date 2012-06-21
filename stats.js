@@ -278,7 +278,13 @@
 
     appendLeader: function(element, leader) {
        var row = $('<tr />');
-       _.each(leaderboardColumns, function(column) { row.append('<td>' + leader.get(attrFrom(column)) + '</td>') });
+       _.each(leaderboardColumns, function(column) {
+          var value = leader.get(attrFrom(column));
+          if (column == 'TrueSkill')
+             value = value.toFixed(4);
+
+          row.append('<td>' + value + '</td>');
+       });
        element.append(row);
     }
   });
