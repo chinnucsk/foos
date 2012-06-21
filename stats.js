@@ -3,11 +3,14 @@
     ALL_GAMES : 'allGames',
     NEW_TABLE : 'newTable',
     OLD_TABLE : 'oldTable',
+    THIS_WEEK: 'thisWeek',
     TODAY : 'today',
   };
 
   var DEFAULT_MODE = Mode.NEW_TABLE;
   var DEFAULT_START_DATE = '1324584000000';
+
+  var MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
   var columns = [
     'Rank',
@@ -75,13 +78,23 @@
     if (isChecked($('#newTable'))) return Mode.NEW_TABLE;
     if (isChecked($('#oldTable'))) return Mode.OLD_TABLE;
     if (isChecked($('#today'))) return Mode.TODAY;
+    if (isChecked($('#thisWeek'))) return Mode.THIS_WEEK;
 
     return Mode.ALL_GAMES;
+  }
+
+  function isLeaderBoard(mode) {
+     return mode == Mode.THIS_WEEK || mode == Mode.TODAY;
   }
 
   function startOfDay(date) {
      var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
      return start.getTime();
+  }
+
+  function startOfWeek(date) {
+     var today = startOfDay(date);
+     return today - (date.getDay() * MILLISECONDS_IN_A_DAY);
   }
 
   function getQueryString(mode) {
@@ -93,6 +106,11 @@
     if (mode == Mode.OLD_TABLE) {
       console.log('fetching data for old table');
       return '?endDate=' + DEFAULT_START_DATE;
+    }
+
+    if (mode == Mode.THIS_WEEK) {
+      console.log('fetching data up until the start of the week');
+      return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfWeek(new Date());
     }
 
     if (mode == Mode.TODAY) {
@@ -167,12 +185,12 @@
        var mode = getMode();
 
        this.collection = new PlayerList();
-       this.collection.url = getPlayerListUrl(mode == Mode.TODAY ? DEFAULT_MODE : mode);
+       this.collection.url = getPlayerListUrl(isLeaderBoard(mode) ? DEFAULT_MODE : mode);
 
        var view = this;
        this.collection.fetch({
           success: function(c,r) {
-             if (mode == Mode.TODAY)
+             if (isLeaderBoard(mode))
                 view.leaderBoard(view, c);
           },
           error: function(c,r) {
@@ -182,8 +200,8 @@
        });
        this.counter = 0;
 
-       // Stats for today are displayed differently, so don't render the table on load
-       if (mode != Mode.TODAY) {
+       // Stats for the leaderboard are displayed differently, so don't render the table on load
+       if (!isLeaderBoard(mode)) {
           this.collection.bind('add', this.appendPlayer,this);
           this.collection.bind('all', this.render, this);
           this.collection.bind('refresh', this.render,this);
@@ -200,6 +218,7 @@
       'click #newTable': 'fetchAndRender',
       'click #oldTable': 'fetchAndRender',
       'click #allGames': 'fetchAndRender',
+      'click #thisWeek': 'fetchAndRender',
       'click #today': 'fetchAndRender',
     },
 
@@ -248,7 +267,7 @@
        gamesExcludingPeriod.each(function(player) {
           var one = findPlayer(allGames, player.get('name'));
           var delta = playerDelta(one, player);
-          if (delta.get('games_played') > 0)
+          if (delta.get('games_played') >= (getMode() == Mode.THIS_WEEK ? 5 : 1))
              leaders.add(delta);
        });
 
