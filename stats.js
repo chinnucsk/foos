@@ -49,9 +49,21 @@
     },
 
     initialize: function() {
-      _.bindAll(this, 'setDynamicAttrs');
+       _.bindAll(this, 'setDynamicAttrs');
     },
   });
+
+  function playerDelta(one, two) {
+     var delta = new Player();
+     delta.attributes.name = one.get('name');
+     delta.attributes.wins = one.get('wins') - two.get('wins');
+     delta.attributes.losses = one.get('losses') - two.get('losses');
+     delta.attributes.goals = one.get('goals') - two.get('goals');
+     delta.attributes.trueskill = one.get('trueskill') - two.get('trueskill');
+     delta.setDynamicAttrs();
+
+     return delta;
+  }
 
   function isChecked(element) {
     return (element.attr('checked') != undefined && element.attr('checked') == 'checked');
@@ -65,6 +77,12 @@
     return Mode.ALL_GAMES;
   }
 
+  function startOfDay(date) {
+     var start = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 4, 0, 0, 0, 0); /// DEBUGGERY
+     ///var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+     return start.getTime();
+  }
+
   function getQueryString(mode) {
     if (mode == Mode.NEW_TABLE) {
       console.log('fetching data for new table');
@@ -74,6 +92,11 @@
     if (mode == Mode.OLD_TABLE) {
       console.log('fetching data for old table');
       return '?endDate=' + DEFAULT_START_DATE;
+    }
+
+    if (mode == Mode.TODAY) {
+      console.log('fetching data for today');
+      return '?startDate=' + startOfDay(new Date());
     }
 
     console.log('fetching data for all games');
@@ -91,6 +114,18 @@
      });
 
      return copy;
+  }
+
+  function findPlayer(playerList, name) {
+     var foundPlayer;
+     playerList.each(function(player) {
+        if (name == player.get('name')) {
+           foundPlayer = player;
+           return false; // stop looping
+        }
+     });
+
+     return foundPlayer;
   }
 
   var PlayerList = Backbone.Collection.extend({
@@ -155,7 +190,7 @@
     },
 
     initialize: function() {
-      _.bindAll(this, 'render', 'appendPlayer', 'leaderBoard');
+      _.bindAll(this, 'render', 'appendPlayer');
       console.log("initialize");
       this.fetchAndRender();
     },
@@ -187,7 +222,29 @@
     leaderBoard: function(view, c) {
        var allGames = copyCollection(c);
 
-       view.render();
+       view.collection.url = getPlayerListUrl(getMode());
+       view.collection.fetch({
+          success: function(c,r) {
+             view.calculateLeaderBoard(view, allGames, c);
+          },
+          error: function(c,r) {
+             console.log("FAIL"+r);
+             window.err=r;
+          }
+       });
+    },
+
+    calculateLeaderBoard: function(view, allGames, periodGames) {
+       var leaders = new Backbone.Collection();
+       periodGames.each(function(player) {
+          var one = findPlayer(allGames, player.get('name'));
+          var delta = playerDelta(one, player);
+          if (delta.get('games_played') > 0)
+             leaders.add();
+       });
+
+       // TODO: fix rank
+       var foo = 1; /// DEBUGGERY
     },
 
     appendPlayer: function(item) {
