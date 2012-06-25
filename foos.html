@@ -72,7 +72,9 @@ var goal = function (team, pos) {
          switched = true;
          for (team in teams) teams[team].reverse();
          teams.reverse();
-         alert("Switch sides!");
+         var g = false;
+         for (team in teams) for (p in teams[team]) if (teams[team][p] == 'Geries') g = true;
+         alert("Switch sides" + (g ? " man, sides!" : "!"));
       }
 
       updateStats(game);
