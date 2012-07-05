@@ -249,7 +249,6 @@
       _(this.collection.models).each(function(item) {
         this.appendPlayer(item);
       }, this);
-      $('.tablesorter').tablesorter({sortList: [[0,0]]}); // sort on first column, ascending
     },
 
     appendPlayer: function(item) {
