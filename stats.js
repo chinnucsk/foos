@@ -1,4 +1,18 @@
 (function($) {
+  var LogLevel = {
+    DEBUG : 0,
+    INFO: 1,
+    WARN: 2,
+    ERROR: 3,
+  }
+
+  var LOG_LEVEL = LogLevel.INFO;
+
+  function log(level, msg) {
+    if (level >= LOG_LEVEL)
+      console.log(msg);
+  }
+
   var Mode = {
     ALL_GAMES : 'allGames',
     NEW_TABLE : 'newTable',
@@ -99,31 +113,30 @@
 
   function getQueryString(mode) {
     if (mode == Mode.NEW_TABLE) {
-      console.log('fetching data for new table');
       return '?startDate=' + DEFAULT_START_DATE;
     }
 
     if (mode == Mode.OLD_TABLE) {
-      console.log('fetching data for old table');
       return '?endDate=' + DEFAULT_START_DATE;
     }
 
     if (mode == Mode.THIS_WEEK) {
-      console.log('fetching data up until the start of the week');
       return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfWeek(new Date());
     }
 
     if (mode == Mode.TODAY) {
-      console.log('fetching data up until today');
       return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfDay(new Date());
     }
 
-    console.log('fetching data for all games');
     return '';
   }
 
   function getPlayerListUrl(mode) {
-    return 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(mode);
+    var url = 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(mode);
+    log(LogLevel.INFO, 'fetching data for ' + mode);
+    log(LogLevel.INFO, url);
+
+    return url;
   }
 
   function copyCollection(orig) {
@@ -159,7 +172,7 @@
     },
 
     render: function() {
-      console.log("rendering item");
+        log(LogLevel.DEBUG, "rendering item");
       var html = '';
 
       this.model.setDynamicAttrs();
@@ -194,7 +207,7 @@
                 view.leaderBoard(view, c);
           },
           error: function(c,r) {
-             console.log("FAIL"+r);
+             log(LogLevel.ERROR, 'FAIL' + r);
              window.err=r;
           }
        });
@@ -210,7 +223,7 @@
 
     initialize: function() {
       _.bindAll(this, 'render', 'appendPlayer');
-      console.log("initialize");
+      log(LogLevel.DEBUG, 'initialize');
       this.fetchAndRender();
     },
 
@@ -223,7 +236,7 @@
     },
 
     render: function() {
-      console.log("rendering collection");
+      log(LogLevel.DEBUG, 'rendering collection');
       this.$('table').html('');
       this.$('table').append('<thead></thead>');
       this.$('thead', 'table').append('<tr></tr>');
@@ -231,7 +244,7 @@
         $('tr', 'thead', 'table', this.el).append('<th>' + column + '</th>');
       }, this);
 
-      console.log("rendering items");
+      log(LogLevel.DEBUG, 'rendering items');
       this.$('table').append('<tbody></tbody>');
       _(this.collection.models).each(function(item) {
         this.appendPlayer(item);
@@ -240,7 +253,7 @@
     },
 
     appendPlayer: function(item) {
-      console.log("appendPlayer");
+      log(LogLevel.DEBUG, 'appendPlayer');
       var itemView = new PlayerView({
         model: item
       });
@@ -256,7 +269,7 @@
              view.calculateLeaderBoard(view, allGames, c);
           },
           error: function(c,r) {
-             console.log("FAIL"+r);
+             log(LogLevel.ERROR, 'FAIL' + r);
              window.err=r;
           }
        });
@@ -277,7 +290,7 @@
     },
 
     renderLeaderBoard: function(view, leaders) {
-       console.log("rendering leaderboard");
+       log(LogLevel.DEBUG, 'rendering leaderboard');
        var table = $('table');
        table.html('');
 
@@ -286,7 +299,7 @@
        _.each(leaderboardColumns, function(column) { headerRow.append('<th>' + column + '</th>') });
        header.append(headerRow);
 
-       console.log("rendering leaders");
+       log(LogLevel.DEBUG, 'rendering leaders');
        var body = $('<tbody />');
        _.each(leaders.models, function(leader) { view.appendLeader(body, leader) });
 
