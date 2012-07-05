@@ -279,7 +279,7 @@
        gamesExcludingPeriod.each(function(player) {
           var one = findPlayer(allGames, player.get('name'));
           var delta = playerDelta(one, player);
-          if (delta.get('games_played') >= (getMode() == Mode.THIS_WEEK ? 5 : 1))
+          if (delta.get('games_played') >= 1)
              leaders.add(delta);
        });
 
