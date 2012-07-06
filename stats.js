@@ -236,27 +236,32 @@
     },
 
     render: function() {
-      log(LogLevel.DEBUG, 'rendering collection');
-      this.$('table').html('');
-      this.$('table').append('<thead></thead>');
-      this.$('thead', 'table').append('<tr></tr>');
-      _(columns).each(function(column) {
-        $('tr', 'thead', 'table', this.el).append('<th>' + column + '</th>');
-      }, this);
+      var table = $('<table />');
+      var header = $('<thead />');
+      var headerRow = $('<tr />');
+      _(columns).each(function(column) { headerRow.append('<th>' + column + '</th>') }, this);
+      header.append(headerRow);
 
       log(LogLevel.DEBUG, 'rendering items');
-      this.$('table').append('<tbody></tbody>');
+
+      var body = $('<tbody />');
       _(this.collection.models).each(function(item) {
-        this.appendPlayer(item);
+        this.appendPlayer(body, item);
       }, this);
+
+      table.append(header);
+      table.append(body);
+
+      $('table').remove();
+      $('#table').append(table);
     },
 
-    appendPlayer: function(item) {
-      log(LogLevel.DEBUG, 'appendPlayer');
+    appendPlayer: function(element, item) {
+      log(LogLevel.DEBUG, 'appendPlayer(' + item.get('name') + ') trueskill: ' + item.get('trueskill'));
       var itemView = new PlayerView({
         model: item
       });
-      $('tbody', 'table', this.el).append(itemView.render().el);
+      element.append(itemView.render().el);
     },
 
     leaderBoard: function(view, c) {
