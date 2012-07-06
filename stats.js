@@ -236,32 +236,29 @@
     },
 
     render: function() {
-      var table = $('<table />');
-      var header = $('<thead />');
-      var headerRow = $('<tr />');
-      _(columns).each(function(column) { headerRow.append('<th>' + column + '</th>') }, this);
-      header.append(headerRow);
-
-      log(LogLevel.DEBUG, 'rendering items');
-
-      var body = $('<tbody />');
-      _(this.collection.models).each(function(item) {
-        this.appendPlayer(body, item);
+      log(LogLevel.DEBUG, 'rendering collection');
+      this.$('table').html('');
+      this.$('table').append('<thead></thead>');
+      this.$('thead', 'table').append('<tr></tr>');
+      _(columns).each(function(column) {
+        $('tr', 'thead', 'table', this.el).append('<th>' + column + '</th>');
       }, this);
 
-      table.append(header);
-      table.append(body);
+      log(LogLevel.DEBUG, 'rendering items');
+      this.$('table').append('<tbody></tbody>');
+      _(this.collection.models).each(function(item) {
+        this.appendPlayer(item);
+      }, this);
 
-      $('table').remove();
-      $('#table').append(table);
+      this.$('table').dataTable({'bDestroy': true, 'bFilter': false, 'bPaginate': false});
     },
 
-    appendPlayer: function(element, item) {
-      log(LogLevel.DEBUG, 'appendPlayer(' + item.get('name') + ') trueskill: ' + item.get('trueskill'));
+    appendPlayer: function(item) {
+      log(LogLevel.DEBUG, 'appendPlayer');
       var itemView = new PlayerView({
         model: item
       });
-      element.append(itemView.render().el);
+      $('tbody', 'table', this.el).append(itemView.render().el);
     },
 
     leaderBoard: function(view, c) {
