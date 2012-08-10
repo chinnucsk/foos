@@ -1,0 +1,195 @@
+ body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+   }
+
+   @font-face {
+      font-family: Scoreboard;
+      src: url('../fonts/scoreboard.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+   }
+
+   .hide { display:none; }
+
+   #table {
+      background: green url("../img/table.svg") 100% 100%;
+      background-size: 100% 100%;
+      height: 70%;
+      box-shadow: inset 0 0 20px #000;
+   }
+   .row {
+      width:12.5%;
+      float: left;
+      height: 100%;
+      position: relative;
+   }
+   #table span {
+      position: absolute;
+      display: block;
+      left: 30%;      display: block;
+      background-image: -webkit-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
+      background-image:    -moz-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
+      background-image:     -ms-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
+      background-image:      -o-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
+      background-image:         linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
+      border-radius: 100%;
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.20);
+      width: 50%;
+      padding-bottom: 50%;
+   }
+   #table .opponent span {
+      background-image: -webkit-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
+      background-image:    -moz-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
+      background-image:     -ms-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
+      background-image:      -o-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
+      background-image:         linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
+   }
+   .goalkeeper span {
+      top: 45%
+   }
+   .defense span:nth-child(1) {
+      top: 30%;
+   }
+   .defense span:nth-child(2) {
+      top: 60%;
+   }
+   .attack span:nth-child(1) {
+      top: 20%;
+   }
+   .attack span:nth-child(2) {
+      top: 45%;
+   }
+   .attack span:nth-child(3) {
+      top: 70%;
+   }
+   .midfield span:nth-child(1) {
+      top: 6%;
+   }
+   .midfield span:nth-child(2) {
+      top: 25%;
+   }
+   .midfield span:nth-child(3) {
+      top: 45%;
+   }
+   .midfield span:nth-child(4) {
+      top: 65%;
+   }
+   .midfield span:nth-child(5) {
+      top: 84%;
+   }
+   .team {
+      background-image: -webkit-linear-gradient(-90deg, #525252 0%, #000000 100%);
+      background-image:    -moz-linear-gradient(-90deg, #525252 0%, #000000 100%);
+      background-image:     -ms-linear-gradient(-90deg, #525252 0%, #000000 100%);
+      background-image:      -o-linear-gradient(-90deg, #525252 0%, #000000 100%);
+      background-image:         linear-gradient(-90deg, #525252 0%, #000000 100%);
+      height: 15%;
+      font-family: Scoreboard;
+      color: #fff;
+   }
+   .team span {
+      display: inline-block;
+      float: left;
+      width: 33%;
+      text-align: center;
+      margin-top: 4vh;
+      text-shadow: 0px 0px 9px #fff;
+      font-size: 6vh;
+   }
+   .team span:nth-child(2) {
+      font-size: 12vh;
+      margin-top: 1vh;
+      color: #E6E000;
+      text-shadow: 0px 0px 9px #FFAE00;
+   }
+   #og, #undo {
+      z-index: 1000;
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      border-radius: 10%;
+      background-color: red;
+      -moz-box-shadow:    0px 2px 4px rgba(0,0,0,0.50);
+      -webkit-box-shadow: 0px 2px 4px rgba(0,0,0,0.50);
+      box-shadow:         0px 2px 4px rgba(0,0,0,0.50);
+      font-family: Arial;
+      font-size: 8vh;
+      text-align: center;
+      padding: 1%;
+   }
+   #og {
+      background-image: -webkit-linear-gradient(-63deg, #FFF000 0%, #FF8406 100%);
+      background-image:    -moz-linear-gradient(-63deg, #FFF000 0%, #FF8406 100%);
+      background-image:     -ms-linear-gradient(-63deg, #FFF000 0%, #FF8406 100%);
+      background-image:      -o-linear-gradient(-63deg, #FFF000 0%, #FF8406 100%);
+      background-image:         linear-gradient(-63deg, #FFF000 0%, #FF8406 100%);
+      border: 1px solid #FEB009;
+      text-shadow: 0px 1px 0px #FDF262;
+   }
+   #undo {
+      left: 85%;
+      background-image: -webkit-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
+      background-image:    -moz-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
+      background-image:     -ms-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
+      background-image:      -o-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
+      background-image:         linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
+      border: 1px solid #780000;
+      text-shadow: 0px -1px 0px #3A0000;
+      color: white;
+   }
+   #table span:active, #og:active, #undo:active {
+      background-image: none;
+      background-color: white;
+      box-shadow: 0 0 20px 18px rgba(255,255,255,1);
+   }
+
+ul#playerlist {
+  font-size:20px;             /* All text content is 20 pixels */
+  font-family: Helvetica;
+  font-weight:bold;
+  margin: 0;               /* The list fills the whole iPhone screen */
+  padding: 0;
+  width: 320px;           /* Each cell is 320 pixels wide */
+  background-color: white;
+}
+
+
+ul#playerlist li {
+  position: relative;
+  list-style-type: none;
+  border-top-width:1px;                    /*   Add a line at the top of every cell */
+  border-top-color:rgb(217,217,217);
+  border-top-style:solid;
+  padding-top:10px;
+  padding-right:10px;
+  padding-bottom:14px;
+  padding-left:10px;
+  height:19px;       /* The total cell height includes the padding-top, padding-bottom, border and height values: 10+14+1+19=44 pixels */
+  line-height:19px;  /* Ensure that the height of the cell includes the line at the top of the cell  */
+}
+
+
+ul#playerlist li:first-child {
+  border-top:0;   /* Remove the line above the first item of the list */
+}
+
+ul#playerlist li span.number {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  color: red;
+}
+
+ul#playerlist li span.number + span.number {
+  right: 33px;
+}
+
+ul#playerlist li span.number + span.number + span.number {
+  right: 53px;
+}
+
+ul#playerlist li span.number + span.number + span.number + span.number {
+  right: 73px;
+}

@@ -1,170 +1,114 @@
 <html>
 <head>
    <title>Foos</title>
+   <link rel="stylesheet" href="css/foos2.css"/>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+   <script>
+      /*$(function() {
+         causeRepaintsOn = $("h1, div, span");
+         $(window).resize(function() {
+            causeRepaintsOn.css("z-index", 1);
+         });
+      });*/
+   </script>
    <link rel="apple-touch-icon" href="touch-icon-iphone4.png"/>
    <style type="text/css">
-   body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-   }
-
-   @font-face {
-      font-family: Scoreboard;
-      src: url('scoreboard.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-   }
-
-   #table {
-      background: green url("img/table.svg") 100% 100%;
-      background-size: 100% 100%;
-      height: 70%;
-      box-shadow: inset 0 0 20px #000;
-   }
-   .row {
-      width:12.5%;
-      float: left;
-      height: 100%;
-      position: relative;
-   }
-   #table span {
-      position: absolute;
-      display: block;
-      left: 30%;      display: block;
-      background-image: -webkit-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
-      background-image:    -moz-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
-      background-image:     -ms-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
-      background-image:      -o-linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
-      background-image:         linear-gradient(-74deg, #8B8B8B 0%, #000000 100%);
-      border-radius: 100%;
-      box-shadow: 0 0 0 8px rgba(255,255,255,0.20);
-      width: 50%;
-      padding-bottom: 50%;
-   }
-   #table .opponent span {
-      background-image: -webkit-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
-      background-image:    -moz-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
-      background-image:     -ms-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
-      background-image:      -o-linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
-      background-image:         linear-gradient(-63deg, #A6E83C 17%, #4E9D21 63%, #1F6908 100%);
-   }
-   #table span:active {
-      background-image: none;
-      background-color: white;
-      box-shadow: 0 0 20px 18px rgba(255,255,255,1);
-   }
-   .goalkeeper span {
-      top: 45%
-   }
-   .defense span:nth-child(1) {
-      top: 30%;
-   }
-   .defense span:nth-child(2) {
-      top: 60%;
-   }
-   .attack span:nth-child(1) {
-      top: 20%;
-   }
-   .attack span:nth-child(2) {
-      top: 45%;
-   }
-   .attack span:nth-child(3) {
-      top: 70%;
-   }
-   .midfield span:nth-child(1) {
-      top: 6%;
-   }
-   .midfield span:nth-child(2) {
-      top: 25%;
-   }
-   .midfield span:nth-child(3) {
-      top: 45%;
-   }
-   .midfield span:nth-child(4) {
-      top: 65%;
-   }
-   .midfield span:nth-child(5) {
-      top: 84%;
-   }
-   .team {
-      background-image: -webkit-linear-gradient(-90deg, #525252 0%, #000000 100%);
-      background-image:    -moz-linear-gradient(-90deg, #525252 0%, #000000 100%);
-      background-image:     -ms-linear-gradient(-90deg, #525252 0%, #000000 100%);
-      background-image:      -o-linear-gradient(-90deg, #525252 0%, #000000 100%);
-      background-image:         linear-gradient(-90deg, #525252 0%, #000000 100%);
-      height: 15%;
-      font-family: Scoreboard;
-      color: #fff;
-   }
-   .team span {
-      display: inline-block;
-      float: left;
-      width: 33%;
-      text-align: center;
-      margin-top: 1em;
-      text-shadow: 0px 0px 9px #fff;
-   }
-   .team span:nth-child(2) {
-      font-size: 36px;
-      margin-top: 0.1em;
-      color: #E6E000;
-      text-shadow: 0px 0px 9px #FFAE00;
-   }
+  
   </style>
 </head>
 <body>
-   <div id="board">
+   <div id="board" class="hide">
+      <div id="og">OG</div>
+      <div id="undo">^Z</div>      
       <div class="team">
-         <span>Player 1</span>
-         <span class="score">0</span>
-         <span>Player 2</span>
+         <span id="player11">p11</span>
+         <span id="score1" class="score">0</span>
+         <span id="player10">p10</span>
       </div>
-   <div id="table">
-      <div class="row goalkeeper">
-         <span></span>
+      <div id="table">
+         <div class="row goalkeeper opponent">
+            <span id="w0"></span>
+         </div>
+         <div class="row defense opponent">
+            <span id="w1"></span>
+            <span id="w2"></span>
+         </div>
+         <div class="row attack ">
+            <span id="b10"></span>
+            <span id="b9"></span>
+            <span id="b8"></span>
+         </div>
+         <div class="row midfield opponent">
+            <span id="w3"></span>
+            <span id="w4"></span>
+            <span id="w5"></span>
+            <span id="w6"></span>
+            <span id="w7"></span>
+         </div>
+         <div class="row midfield">
+            <span id="b7"></span>
+            <span id="b6"></span>
+            <span id="b5"></span>
+            <span id="b4"></span>
+            <span id="b3"></span>
+         </div>
+         <div class="row attack opponent">
+            <span id="w8"></span>
+            <span id="w9"></span>
+            <span id="w10"></span>
+         </div>
+         <div class="row defense">
+            <span id="b2"></span>
+            <span id="b1"></span>
+         </div>
+         <div class="row goalkeeper">
+            <span id="b0"></span>
+         </div>
       </div>
-      <div class="row defense">
-         <span></span>
-         <span></span>
-      </div>
-      <div class="row attack opponent">
-         <span></span>
-         <span></span>
-         <span></span>
-      </div>
-      <div class="row midfield">
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-      </div>
-      <div class="row midfield opponent">
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-         <span></span>
-   </div>
-      <div class="row attack">
-         <span></span>
-         <span></span>
-         <span></span>
-   </div>
-      <div class="row defense opponent">
-         <span></span>
-         <span></span>
-   </div>
-      <div class="row goalkeeper opponent">
-         <span></span>
-   </div>
-   </div>
       <div class="team">
-         <span>Player 1</span>
-         <span class="score">0</span>
-         <span>Player 2</span>
+         <span id="player00">p00</span>
+         <span id="score0" class="score">0</span>
+         <span id="player01">p01</span>
       </div>
+   </div>
+   <button id="oldschool">TAKE ME BACK!</button>
+<div id="team-suggestion" class="hide">
+   <h2>waiting for team suggestion...</h2>
 </div>
+<ul id="playerlist"></ul>
+<div id="game-select" class="hide">
+   <h2>team select</h2>
+
+   <div class="circle white"></div>
+   <select id="team00">
+      <option></option>
+   </select> or
+   <input id="team00n" type="text"/><br/>
+   <select id="team01">
+      <option></option>
+   </select> or
+   <input id="team01n" type="text"/>
+
+   <div style="clear:both;"></div>
+   <div class="circle blue"></div>
+   <select id="team10">
+      <option></option>
+   </select> or
+   <input id="team10n" type="text"/><br/>
+   <select id="team11">
+      <option></option>
+   </select> or
+   <input id="team11n" type="text"/>
+
+   <div style="clear:both;"></div>
+   <h1>
+      <a href="#" id="suggest-teams">suggest teams</a> | <a href="#" id="start-game">start game</a> |
+      <a href="#" id="start-test-game">test game</a>
+   </h1>
+
+   <h1><a href="stats.html">stats</a></h1>
+</div>
+<script src="js/foos.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
