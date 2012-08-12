@@ -135,7 +135,7 @@ var setupCircles = function (color, team) {
 };
 
 var updateOG = function () {
-   ownGoal ? $("#og").addClass("red") : $("#og").removeClass("red");
+   ownGoal ? $("#og").addClass("activate") : $("#og").removeClass("activate");
 };
 
 $(function () {
