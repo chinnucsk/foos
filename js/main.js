@@ -5,6 +5,8 @@ window.addEventListener('load', function () {
 var causeRepaintsOn = $("h1, div, span");
 $(window).resize(function() {
    causeRepaintsOn.css("z-index", 1);
+   $('#og').css("z-index", 1000);
+   $('#undo').css("z-index", 1000);
 });
 
 var token;
