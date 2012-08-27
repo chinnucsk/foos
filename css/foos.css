@@ -2,6 +2,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      font-family: Helvetica, Arial, Sans-Serif;
    }
 
    @font-face {
@@ -131,19 +132,11 @@
 
    #og.activate {
       (-63deg, #1F6908 80%, #4E9D21 63%, #A6E83C 17%);
-      background-image: -webkit-linear-gradient(-63deg, #1F6908 17%, #FF8406 63%, #D8CD24 100%);
-      background-image:    -moz-linear-gradient(-63deg, #1F6908 17%, #FF8406 63%, #D8CD24 100%);
-      background-image:     -ms-linear-gradient(-63deg, #1F6908 17%, #FF8406 63%, #D8CD24 100%);
-      background-image:      -o-linear-gradient(-63deg, #1F6908 17%, #FF8406 63%, #D8CD24 100%);
-      background-image:         linear-gradient(-63deg, #1F6908 17%, #FF8406 63%, #D8CD24 100%);
-      /*background-image: none;
-      background-color: #EEAD0E;*/
-      -moz-box-shadow:    none;
-      -webkit-box-shadow: none;
-      box-shadow:         none;
-      border: none;
-       text-shadow: none;
-
+      background-image: -webkit-linear-gradient(-63deg, #FF8406 0%, #FFF000 100%);
+      background-image:    -moz-linear-gradient(-63deg, #FF8406 0%, #FFF000 100%);
+      background-image:     -ms-linear-gradient(-63deg, #FF8406 0%, #FFF000 100%);
+      background-image:      -o-linear-gradient(-63deg, #FF8406 0%, #FFF000 100%);
+      background-image:         linear-gradient(-63deg, #FF8406 0%, #FFF000 100%);
    }
 
    #undo {
@@ -153,7 +146,7 @@
       background-image:     -ms-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
       background-image:      -o-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
       background-image:         linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
-      border: 1px solid #780000;
+      border: 1px solid #A90000;
       text-shadow: 0px -1px 0px #3A0000;
       color: white;
    }

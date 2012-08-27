@@ -15,6 +15,12 @@
       td {
         padding: 0px 10px;
       }
+      tr:hover {
+        background-color: #efefef;
+      }
+      .sorting_1 {
+        background-color: #ffff99;
+      }
     </style>
 
     <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
@@ -29,11 +35,11 @@
     <h1>Foosball Stats | <a href="index.html">New Game</a></h1>
     <div id="players">
        <p>
-         <input id="newTable" name="games" type="radio" checked="checked" /> New table
-         <input id="today" name="games" type="radio" /> Today
-         <input id="thisWeek" name="games" type="radio" /> This week
-         <input id="oldTable" name="games" type="radio" /> Old table
-         <input id="allGames" name="games" type="radio" /> All games
+         <input id="newTable" name="games" type="radio" checked="checked" /> <label for="newTable">New table</label>
+         <input id="today" name="games" type="radio" /> <label for="today">Today</label>
+         <input id="thisWeek" name="games" type="radio" /> <label for="thisWeek">This week</label>
+         <input id="oldTable" name="games" type="radio" /> <label for="oldTable">Old table</label>
+         <input id="allGames" name="games" type="radio" /> <label for="allGames">All games</label>
        </p>
        <table />  <!-- stats.js will insert the table -->
     </div>

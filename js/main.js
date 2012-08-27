@@ -2,13 +2,6 @@ window.addEventListener('load', function () {
    setTimeout(scrollTo, 0, 0, 1);
 }, false);
 
-var causeRepaintsOn = $("h1, div, span");
-$(window).resize(function() {
-   causeRepaintsOn.css("z-index", 1);
-   $('#og').css("z-index", 1000);
-   $('#undo').css("z-index", 1000);
-});
-
 var token;
 var teams;
 var switched = false;
