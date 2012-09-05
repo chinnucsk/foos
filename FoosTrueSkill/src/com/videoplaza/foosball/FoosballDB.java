@@ -1,5 +1,16 @@
 package com.videoplaza.foosball;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
+import com.mongodb.MongoException;
+import com.videoplaza.foosball.model.Game;
+import com.videoplaza.foosball.model.Player;
+import com.videoplaza.foosball.skill.FoosballRating;
+
 import java.net.UnknownHostException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -16,17 +27,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.MongoException;
-import com.videoplaza.foosball.model.Game;
-import com.videoplaza.foosball.model.Player;
-import com.videoplaza.foosball.skill.FoosballRating;
-
 /**
  * @author jakob
  */
@@ -34,6 +34,7 @@ public class FoosballDB {
 
    public static Date DEFAULT_START_DATE = new Date(0);
    public static Date DEFAULT_END_DATE = new Date(Long.MAX_VALUE);
+   private static final int MIN_REQUIRED_GAMES = 1;
 
    private DB db;
    private Map<String, Long> goalsPerPlayer;
@@ -166,6 +167,17 @@ public class FoosballDB {
       sb.append("[");
       boolean first = true;
       for (Player player : leaderBoard) {
+         Long wins = winsPerPlayer.get(player.getName());
+         if (wins == null)
+            wins = 0L;
+
+         Long losses = lossesPerPlayer.get(player.getName());
+         if (losses == null)
+            losses = 0L;
+
+         if (playerHasPlayedTooFewGames(wins + losses))
+            continue;
+
          if (!first)
             sb.append(",");
          sb.append("{");
@@ -174,14 +186,18 @@ public class FoosballDB {
          json(sb, "trueskill", player.getTrueSkill()).append(",");
          json(sb, "mu", player.getSkill()).append(",");
          json(sb, "sigma", player.getUncertainty()).append(",");
-         json(sb, "wins", winsPerPlayer.get(player.getName())).append(",");
-         json(sb, "losses", lossesPerPlayer.get(player.getName())).append(",");
+         json(sb, "wins", wins).append(",");
+         json(sb, "losses", losses).append(",");
          json(sb, "goals", goalsPerPlayer.get(player.getName()));
          sb.append("}\n");
          first = false;
       }
       sb.append("]");
       return sb.toString();
+   }
+
+   private boolean playerHasPlayedTooFewGames(Long games) {
+      return games < MIN_REQUIRED_GAMES;
    }
 
    public void updatePlayers(List<Player> players) {
