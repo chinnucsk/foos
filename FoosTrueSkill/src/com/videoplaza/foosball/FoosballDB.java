@@ -32,11 +32,12 @@ import java.util.TreeMap;
  */
 public class FoosballDB {
 
-   public static Date DEFAULT_START_DATE = new Date(0);
-   public static Date DEFAULT_END_DATE = new Date(Long.MAX_VALUE);
-   private static final int MIN_REQUIRED_GAMES = 1;
+   private static final Date DEFAULT_START_DATE = new Date(0);
+   private static final Date DEFAULT_END_DATE = new Date(Long.MAX_VALUE);
+   private static final int DEFAULT_MIN_REQUIRED_GAMES = 0;
 
    private DB db;
+
    private Map<String, Long> goalsPerPlayer;
    private Map<String, Long> winsPerPlayer;
    private Map<String, Long> lossesPerPlayer;
@@ -86,14 +87,14 @@ public class FoosballDB {
             for (DBObject s : scores) {
                increase(goalsPerPlayer, (String) s.get("player"));
             }
-
-         } catch (Exception e) {
-            //e.printStackTrace();
-            //System.err.println("Failed to convert game: " + object);
+         } catch (Exception _) {
+            // Nothing to do
          }
          count++;
       }
+
       System.err.println("Successfully converted " + count + " games.");
+
       return result;
    }
 
@@ -105,15 +106,14 @@ public class FoosballDB {
       for (DBObject object : cursor) {
          try {
             String name = (String) object.get("name");
-            //Double mu = (Double) object.get("mu");
-            //Double sigma = (Double) object.get("sigma");
             result.add(new Player(name));
          } catch (Exception e) {
             e.printStackTrace();
-            //System.err.println("Failed to convert player: " + object);
          }
+
          count++;
       }
+
       System.err.println("Successfully converted " + count + " players.");
 
       return result;
@@ -130,15 +130,27 @@ public class FoosballDB {
          map.put(key, 1L);
    }
 
-   public String recalculate(Date startDate, Date endDate) {
+   public String recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr) {
+      Date startDate = createDate(startDateStr, DEFAULT_START_DATE);
+      Date endDate = createDate(endDateStr, DEFAULT_END_DATE);
+      int minRequiredGames = createInt(minRequiredGamesStr, DEFAULT_MIN_REQUIRED_GAMES);
+
+      System.err.println(
+         "Recalculating TrueSkill for players with at least " + minRequiredGames
+            + " game(s) played between "
+            + startDate.toString()
+            + " and "
+            + endDate.toString()
+      );
+
       Map<String, Player> players = new HashMap<String, Player>();
-      for (Player player : getPlayers()) {
+      for (Player player : getPlayers())
          players.put(player.getName(), player);
-      }
+
       processedGames = new TreeMap<Date, Game>();
-      for (Game game : getGames(startDate, endDate)) {
+      for (Game game : getGames(startDate, endDate))
          getProcessedGames().put(game.getStarted(), game);
-      }
+
       FoosballRating ratings = new FoosballRating(players.values());
 
       for (Entry<Date, Game> entry : getProcessedGames().entrySet()) {
@@ -175,7 +187,7 @@ public class FoosballDB {
          if (losses == null)
             losses = 0L;
 
-         if (playerHasPlayedTooFewGames(wins + losses))
+         if ((wins + losses) < minRequiredGames)
             continue;
 
          if (!first)
@@ -194,10 +206,6 @@ public class FoosballDB {
       }
       sb.append("]");
       return sb.toString();
-   }
-
-   private boolean playerHasPlayedTooFewGames(Long games) {
-      return games < MIN_REQUIRED_GAMES;
    }
 
    public void updatePlayers(List<Player> players) {
@@ -219,18 +227,28 @@ public class FoosballDB {
    }
 
    public static Date createDate(String str, Date fallback) {
-      if (str == null)
+      try {
+         return new Date(Long.parseLong(str));
+      } catch (Exception _) {
          return fallback;
+      }
+   }
 
-      return new Date(Long.parseLong(str));
+   private int createInt(String str, int fallback) {
+      try {
+         return Integer.valueOf(str);
+      } catch (Exception _) {
+         return fallback;
+      }
    }
 
    public static void main(String[] args) {
-      Date startDate = createDate(args.length >= 1 ? args[0] : null, DEFAULT_START_DATE);
-      Date endDate = createDate(args.length >= 2 ? args[1] : null, DEFAULT_END_DATE);
+      String startDate = args.length >= 1 ? args[0] : null;
+      String endDate = args.length >= 2 ? args[1] : null;
+      String minRequiredGames = args.length >= 3 ? args[2] : null;
 
       FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
-      System.out.println(db.recalculate(startDate, endDate));
+      System.out.println(db.recalculate(startDate, endDate, minRequiredGames));
    }
 
    private static StringBuilder json(StringBuilder sb, String name, Number value) {

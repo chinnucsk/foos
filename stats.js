@@ -128,7 +128,7 @@
       return '?startDate=' + seasonTimestamps[DEFAULT_MODE]['start'] + '&endDate=' + startOfDay(new Date());
     }
 
-    return '?startDate=' + seasonTimestamps[mode]['start'] + '&endDate=' + seasonTimestamps[mode]['end'];
+    return '?startDate=' + seasonTimestamps[mode]['start'] + '&endDate=' + seasonTimestamps[mode]['end'] + '&minReqGames=1';
   }
 
   function getPlayerListUrl(mode) {
@@ -281,9 +281,11 @@
        var leaders = new Backbone.Collection();
        gamesExcludingPeriod.each(function(player) {
           var one = findPlayer(allGames, player.get('name'));
-          var delta = playerDelta(one, player);
-          if (delta.get('games_played') >= 1)
-             leaders.add(delta);
+          if (one != undefined) {
+             var delta = playerDelta(one, player);
+             if (delta.get('games_played') >= 1)
+                leaders.add(delta);
+          }
        });
 
        leaders.models = _.sortBy(leaders.models, function(leader) { return leader.get('trueskill') * -1 }); // sort descending
