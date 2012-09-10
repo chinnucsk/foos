@@ -7,11 +7,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class HeatMap {
    private static final int MONGO_PORT = 27017;
    private static final String MONGO_DB = "foos";
    private static final String NO_DATA_PLACEHOLDER = "? ";
+   private static final int BG_VALUE = -1;
 
    private static File GNUPLOT;
    private static File OUTPUT_DIR;
@@ -131,6 +134,8 @@ public class HeatMap {
          cursor.close();
       }
 
+      System.out.println("Found " + playerNames.size() + " players");
+
       coll = db.getCollection("game");
       cursor = coll.find();
 
@@ -196,20 +201,35 @@ public class HeatMap {
       return heatMaps;
 
    }
-   private static void generateImages(Map<String,Map<String, Integer>> heatMaps) {
-      System.out.println("Generating heat map images");
+
+   private static void generateImages(Map<String, Map<String, Integer>> heatMaps) {
+      System.out.println("Generating heat map images for " + heatMaps.size() + " players");
       for (String player : heatMaps.keySet()) {
          String white = generateWhiteHeatMapMatrix(player, heatMaps);
          String black = generateBlackHeatMapMatrix(player, heatMaps);
          String ownGoal = generateOwnGoalHeatMapMatrix(player, heatMaps);
 
-         generateImage(player + " as white player", player + "_white.png", white);
-         generateImage(player + " as black player", player + "_black.png", black);
-         generateImage(player + " own goals", player + "_owngoal.png", ownGoal);
+         int whiteMax = getMaxValue(heatMaps.get(player), "w");
+         int blackMax = getMaxValue(heatMaps.get(player), "b");
+         int owngoalMax = getMaxValue(heatMaps.get(player), "o");
+
+         generateImage(player + " as white player", player + "_white.png", white, whiteMax);
+         generateImage(player + " as black player", player + "_black.png", black, blackMax);
+         generateImage(player + " own goals", player + "_owngoal.png", ownGoal, owngoalMax);
       }
    }
 
-   private static void generateIndexPage(Map<String,Map<String, Integer>> heatMaps) {
+   private static int getMaxValue(Map<String, Integer> heatMap, String playerPrefix) {
+      int max = 0;
+      for (String position : heatMap.keySet()) {
+         if (position.startsWith(playerPrefix)) {
+            max = Math.max(max, heatMap.get(position));
+         }
+      }
+      return max;
+   }
+
+   private static void generateIndexPage(Map<String, Map<String, Integer>> heatMaps) {
       System.out.println("Generating index page");
       StringBuilder html = new StringBuilder("<!DOCTYPE HTML>\n");
       html.append("<html>\n");
@@ -238,12 +258,19 @@ public class HeatMap {
          html.append("<img width='33%' src='" + player + "_owngoal.png' />");
       }
       html.append("</body></html>");
+      BufferedWriter bw = null;
       try {
-         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(OUTPUT_DIR, "index.html")),"UTF-8"));
+         bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(OUTPUT_DIR, "index.html")), "UTF-8"));
          bw.write(html.toString());
-         bw.close();
       } catch (IOException e) {
          e.printStackTrace();
+      } finally {
+         if (bw != null)
+            try {
+               bw.close();
+            } catch (IOException e) {
+               e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
       }
    }
 
@@ -272,7 +299,6 @@ public class HeatMap {
    }
 
    private static String generateHeatMapMatrix(String player, Map<String, Map<String, Integer>> heatMaps, char type, int[][] positions) {
-      int BG_VALUE = -10;
       StringBuilder b = new StringBuilder();
       try {
          Map<String, Integer> playerHM = heatMaps.get(player);
@@ -303,7 +329,7 @@ public class HeatMap {
 
             // Add placeholder row to pull the player apart
             for (int i = 0; i <= 15; i++)
-               b.append("? ");
+               b.append(NO_DATA_PLACEHOLDER);
             b.append("\n");
          }
 
@@ -313,13 +339,13 @@ public class HeatMap {
       return b.toString();
    }
 
-
-   private static void generateImage(String title, String filename, String matrix) {
+   private static void generateImage(String title, String filename, String matrix, int maxValue) {
       StringBuilder plotScript = new StringBuilder();
       plotScript.append("set title '");
       plotScript.append(title);
       plotScript.append("'\n");
       plotScript.append("set datafile missing \"?\"\n");
+      plotScript.append("set cbrange ["+BG_VALUE+":" + Math.max(1,maxValue) + "]\n");
       plotScript.append("set palette defined (0 'blue', 1 'red')\n");
       plotScript.append("unset xtics\n");
       plotScript.append("unset ytics\n");
@@ -333,7 +359,6 @@ public class HeatMap {
       plotScript.append("plot '-' matrix with image\n");
       plotScript.append(matrix);
       plotScript.append("e\n");
-
       // System.out.print("Generating " + filename);
       try {
          File tmpFile = File.createTempFile("heatmap", ".gnuplot");
@@ -346,8 +371,14 @@ public class HeatMap {
          Process p = Runtime.getRuntime().exec(GNUPLOT.getAbsolutePath() + " " + tmpFile.getAbsolutePath());
          p.waitFor();
          tmpFile.delete();
-
-         // System.out.println(": " + p.exitValue());
+         if (p.exitValue() != 0) {
+            System.out.println("ERROR: could not generate heatmap '" + title + "'. Gnuplot exited with " + p.exitValue());
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            System.out.println("Gnuplot error output: ");
+            String line = null;
+            while ((line = br.readLine()) != null)
+               System.out.println(line);
+         }
       } catch (Exception e) {
          e.printStackTrace();
       }
