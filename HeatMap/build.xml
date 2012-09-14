@@ -9,6 +9,7 @@
          <src path="${src}"/>
          <classpath refid="java"/>
       </javac>
+      <copy file="${src}/index.vm" todir="${output}"/>
    </target>
 
    <target name="jar" depends="compile">
@@ -32,9 +33,17 @@
       <mkdir dir="${output}"/>
    </target>
 
+   <target name="run" depends="jar">
+      <java jar="dist/heatmap-generator.jar" fork="true" >
+         <arg value="out/" />
+      </java>
+
+   </target>
+
    <path id="java">
       <fileset dir="${libs}">
          <include name="*.jar"/>
       </fileset>
    </path>
+
 </project>
