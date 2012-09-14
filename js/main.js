@@ -284,7 +284,7 @@ $(function () {
          playerListElement.append(getPlayerLi(t1p0));
          playerListElement.append(getPlayerLi(t1p1));
          playerListElement.show();
-      });
+      },'json');
    };
 
    var startGame = function () {
@@ -302,8 +302,14 @@ $(function () {
    });
    $("ul#playerlist").click(function (e) {
       var player = $(e.target);
-      players.push(player.data('player'));
-      player.append('<span class="number">' + players.length + '</span>');
+      //this is to unde selection of players 
+      if ($('.number', player).length>0) {
+         $('.number', player).remove();
+         players.remove(players.indexOf(player.data('player')));
+      } else {
+         players.push(player.data('player'));
+         player.append('<span class="number">' + players.length + '</span>');
+      }
       if (players.length == 4) {
          var teamSuggestionElement = $("#team-suggestion");
          if (teamSuggestionElement.is(":visible")) {
