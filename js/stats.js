@@ -14,15 +14,22 @@
   }
 
   var Mode = {
+    SEASON_2012Q4 : 'season2012Q4',
     ALL_GAMES : 'allGames',
-    NEW_TABLE : 'newTable',
+    SEASON_2012Q1_3 : 'season2012Q1_3',
     OLD_TABLE : 'oldTable',
     THIS_WEEK: 'thisWeek',
     TODAY : 'today',
   };
 
-  var DEFAULT_MODE = Mode.NEW_TABLE;
-  var DEFAULT_START_DATE = '1324584000000';
+  var seasonTimestamps = {
+      'season2012Q4' : {'start': '1346018400000', 'end': '95649030000000'},
+      'allGames' : {'start': '0', 'end': '95649030000000'},
+      'season2012Q1_3' : {'start': '1324584000000', 'end': '1346018400000'},
+      'oldTable' : {'start': '0', 'end': '1324584000000'},
+  };
+
+  var DEFAULT_MODE = Mode.SEASON_2012Q4;
 
   var MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
@@ -89,7 +96,8 @@
   }
 
   function getMode() {
-    if (isChecked($('#newTable'))) return Mode.NEW_TABLE;
+    if (isChecked($('#season2012Q4'))) return Mode.SEASON_2012Q4;
+    if (isChecked($('#season2012Q1_3'))) return Mode.SEASON_2012Q1_3;
     if (isChecked($('#oldTable'))) return Mode.OLD_TABLE;
     if (isChecked($('#today'))) return Mode.TODAY;
     if (isChecked($('#thisWeek'))) return Mode.THIS_WEEK;
@@ -112,23 +120,15 @@
   }
 
   function getQueryString(mode) {
-    if (mode == Mode.NEW_TABLE) {
-      return '?startDate=' + DEFAULT_START_DATE;
-    }
-
-    if (mode == Mode.OLD_TABLE) {
-      return '?endDate=' + DEFAULT_START_DATE;
-    }
-
     if (mode == Mode.THIS_WEEK) {
-      return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfWeek(new Date());
+      return '?startDate=' + seasonTimestamps[DEFAULT_MODE]['start'] + '&endDate=' + startOfWeek(new Date());
     }
 
     if (mode == Mode.TODAY) {
-      return getQueryString(DEFAULT_MODE) + '&endDate=' + startOfDay(new Date());
+      return '?startDate=' + seasonTimestamps[DEFAULT_MODE]['start'] + '&endDate=' + startOfDay(new Date());
     }
 
-    return '';
+    return '?startDate=' + seasonTimestamps[mode]['start'] + '&endDate=' + seasonTimestamps[mode]['end'] + '&minReqGames=1';
   }
 
   function getPlayerListUrl(mode) {
@@ -228,7 +228,8 @@
     },
 
     events: {
-      'click #newTable': 'fetchAndRender',
+      'click #season2012Q4': 'fetchAndRender',
+      'click #season2012Q1_3': 'fetchAndRender',
       'click #oldTable': 'fetchAndRender',
       'click #allGames': 'fetchAndRender',
       'click #thisWeek': 'fetchAndRender',
@@ -280,9 +281,11 @@
        var leaders = new Backbone.Collection();
        gamesExcludingPeriod.each(function(player) {
           var one = findPlayer(allGames, player.get('name'));
-          var delta = playerDelta(one, player);
-          if (delta.get('games_played') >= 1)
-             leaders.add(delta);
+          if (one != undefined) {
+             var delta = playerDelta(one, player);
+             if (delta.get('games_played') >= 1)
+                leaders.add(delta);
+          }
        });
 
        leaders.models = _.sortBy(leaders.models, function(leader) { return leader.get('trueskill') * -1 }); // sort descending

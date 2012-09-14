@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project name="Foos Heat Map Generator" basedir="." default="jar">
+   <property name="src" value="src"/>
+   <property name="output" value="build"/>
+   <property name="libs" value="lib"/>
+
+   <target name="compile" depends="create">
+      <javac destdir="${output}">
+         <src path="${src}"/>
+         <classpath refid="java"/>
+      </javac>
+   </target>
+
+   <target name="jar" depends="compile">
+      <manifest file="${output}/MANIFEST.MF">
+         <attribute name="Main-Class"
+                    value="HeatMap" />
+      </manifest>
+
+      <jar destfile="dist/heatmap-generator.jar" manifest="${output}/MANIFEST.MF">
+         <fileset dir="${output}"/>
+         <zipgroupfileset dir="${libs}" includes="*.jar"/>
+      </jar>
+   </target>
+
+
+   <target name="clean">
+      <delete dir="${output}"/>
+   </target>
+
+   <target name="create" depends="clean">
+      <mkdir dir="${output}"/>
+   </target>
+
+   <path id="java">
+      <fileset dir="${libs}">
+         <include name="*.jar"/>
+      </fileset>
+   </path>
+</project>

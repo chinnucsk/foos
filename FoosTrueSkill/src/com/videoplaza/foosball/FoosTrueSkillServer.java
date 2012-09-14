@@ -1,5 +1,14 @@
 package com.videoplaza.foosball;
 
+import com.videoplaza.foosball.model.Game;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
@@ -8,33 +17,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-
-import com.videoplaza.foosball.model.Game;
-
 public class FoosTrueSkillServer extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
    private static final String ONE_DAY_IN_SECONDS = "86400";
 
-   private FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
+   private static final String HOSTNAME = "rouzbeh.videoplaza.org";
+   private static final String DATABASE = "foos";
+
+   private FoosballDB db = new FoosballDB(HOSTNAME, DATABASE);
+
    private final NumberFormat nf = NumberFormat.getInstance();
 
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       addCorsHeaders(req, resp);
 
-      Date startDate = FoosballDB.createDate(req.getParameter("startDate"), FoosballDB.DEFAULT_START_DATE);
-      Date endDate = FoosballDB.createDate(req.getParameter("endDate"), FoosballDB.DEFAULT_END_DATE);
+      String startDate = req.getParameter("startDate");
+      String endDate = req.getParameter("endDate");
+      String minRequiredGames = req.getParameter("minReqGames");
 
-      String output = db.recalculate(startDate, endDate);
+      String output = db.recalculate(startDate, endDate, minRequiredGames);
 
       String path = req.getPathInfo();
       PrintWriter writer = resp.getWriter();
