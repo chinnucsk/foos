@@ -2,138 +2,146 @@ window.addEventListener('load', function () {
    setTimeout(scrollTo, 0, 0, 1);
 }, false);
 
-var token;
-var teams;
-var switched = false;
-var ownGoal = false;
-var players = [];
 
-var updateStats = function (game) {
-   for (team in teams)
-      for (player in teams[team])
-         $("#player" + team + player).text(teams[team][player]);
-
-   var score = Foos.getScore(game);
-   if (switched) score.reverse();
-   $("#score0").text(score[0]);
-   $("#score1").text(score[1]);
-   if (game.scores.length) {
-      var lscore = game.scores[game.scores.length - 1];
-      var msg = "";
-      if (!Foos.isSelfGoal(game, lscore)) {
-         msg = lscore.player + ' scores from ' + lscore.position;
-      } else {
-         msg = lscore.player + ' scores own goal from ' + lscore.position;
-      }
-      //$("#log").text(msg);
-   }
-}
-
-var goal = function (team, pos) {
-   if (token == undefined) return;
-
-   // find player
-   var posColor = pos.substr(0, 1) == "w" ? 0 : 1;
-   var posNum = pos.substr(1) * 1;
-   var pl = teams[posColor];
-   if (pl.length > 1)
-      pl = pl[posNum < 3 ? 0 : 1]; else
-      pl = pl[0];
-
-   // reverse teams if switched
-   if (switched) team = team == 0 ? 1 : 0;
-
-   // own goal?
-   if (ownGoal) {
-      team = team == 0 ? 1 : 0;
-      ownGoal = false;
-      updateOG();
-   }
-
-   Foos.score(token, team, pl, pos, function (game) {
-      var score = Foos.getScore(game);
-      // switch teams
-      if (!switched && (score[0] == 5 || score[1] == 5)) {
-         switched = true;
-         for (team in teams) teams[team].reverse();
-         teams.reverse();
-         var g = false;
-         for (team in teams) for (p in teams[team]) if (teams[team][p] == 'Geries') g = true;
-         alert("Switch sides" + (g ? " man, sides!" : "!"));
-      }
-
-      updateStats(game);
-
-      // game finished
-      if (score[0] == 10 || score[1] == 10) {
-         var winning_team = score[0] == 10 ? 0 : 1;
-         var losing_team = winning_team == 0 ? 1 : 0;
-         var winners = game.teams[winning_team];
-         alert("Winners are team " + winners[0] + " & " + winners[1]);
-
-         var tally = Foos.tallyScores(game);
-         var tallyList = [];
-         for (t in tally) tallyList.push({name:t, score:tally[t]});
-         tallyList.sort(function (a, b) {
-            return a.score < b.score;
-         });
-         var tallyText = "";
-         for (t in tallyList) tallyText += tallyList[t].name + "=" + tallyList[t].score + ", ";
-         $("#log").text(tallyText.substr(0, tallyText.length - 2));
-
-         $("#team" + losing_team + "0").val(game.teams[losing_team][1]);
-         $("#team" + losing_team + "1").val(game.teams[losing_team][0]);
-         $("#team" + winning_team + "0").val(game.teams[winning_team][0]);
-         $("#team" + winning_team + "1").val(game.teams[winning_team][1]);
-
-         $("#start-game").text("rematch!");
-         $("#start-test-game").text("test rematch");
-         $("#game-select").show("hide");
-      }
-   });
-
-};
-
-var undo = function () {
-   Foos.undo(token, function (game) {
-      var score = Foos.getScore(game);
-
-      // switch sides?
-      if (switched && ((score[0] >= score[1] && score[0] == 4) || (score[1] >= score[0] && score[1] == 4))) {
-         switched = false;
-         for (team in teams) teams[team].reverse();
-         teams.reverse();
-         alert("Switch back!");
-      }
-
-      // if we're undoing a winning goal, let the players know
-      if ((score[0] >= score[1] && score[0] == 9) || (score[1] >= score[0] && score[1] == 9)) {
-         $("#game-select").addClass("hide");
-         alert("Game's not over yet!");
-      }
-
-      updateStats(game);
-   });
-}
-
-var goalCaller = function (team, pos) {
-   return function () {
-      goal(team, pos);
-   };
-}
-
-var setupCircles = function (color, team) {
-   for (i = 0; i < 11; i++) {
-      var pos = color + i;
-      $("#" + pos).click(goalCaller(team, pos));
-   }
-};
-
-var updateOG = function () {
-   ownGoal ? $("#og").addClass("activate") : $("#og").removeClass("activate");
-};
 
 $(function () {
+   var token;
+   var teams;
+   var switched = false;
+   var ownGoal = false;
+   var players = [];
+
+   var updateStats = function (game) {
+      for (team in teams) {
+         for (player in teams[team]) {
+            $("#player" + team + player).text(teams[team][player]);
+         }
+      }
+
+      var score = Foos.getScore(game);
+      if (switched) { 
+         score.reverse();
+      }
+      $("#score0").text(score[0]);
+      $("#score1").text(score[1]);
+      if (game.scores.length) {
+         var lscore = game.scores[game.scores.length - 1];
+         var msg = "";
+         if (!Foos.isSelfGoal(game, lscore)) {
+            msg = lscore.player + ' scores from ' + lscore.position;
+         } else {
+            msg = lscore.player + ' scores own goal from ' + lscore.position;
+         }
+         $("#log").text(msg);
+      }
+   }
+
+   var goal = function (team, pos) {
+      if (token == undefined) return;
+
+      // find player
+      var posColor = pos.substr(0, 1) == "w" ? 0 : 1;
+      var posNum = pos.substr(1) * 1;
+      var pl = teams[posColor];
+      if (pl.length > 1){
+         pl = pl[posNum < 3 ? 0 : 1]; 
+      } else {
+         pl = pl[0];
+      }
+
+      // reverse teams if switched
+      if (switched) team = team == 0 ? 1 : 0;
+
+      // own goal?
+      if (ownGoal) {
+         team = team == 0 ? 1 : 0;
+         ownGoal = false;
+         updateOG();
+      }
+
+      Foos.score(token, team, pl, pos, function (game) {
+         var score = Foos.getScore(game);
+         // switch teams
+         if (!switched && (score[0] == 5 || score[1] == 5)) {
+            switched = true;
+            for (team in teams) teams[team].reverse();
+            teams.reverse();
+            var g = false;
+            for (team in teams) for (p in teams[team]) if (teams[team][p] == 'Geries') g = true;
+            alert("Switch sides" + (g ? " man, sides!" : "!"));
+         }
+
+         updateStats(game);
+
+         // game finished
+         if (score[0] == 10 || score[1] == 10) {
+            var winning_team = score[0] == 10 ? 0 : 1;
+            var losing_team = winning_team == 0 ? 1 : 0;
+            var winners = game.teams[winning_team];
+            alert("Winners are team " + winners[0] + " & " + winners[1]);
+
+            var tally = Foos.tallyScores(game);
+            var tallyList = [];
+            for (t in tally) tallyList.push({name:t, score:tally[t]});
+            tallyList.sort(function (a, b) {
+               return a.score < b.score;
+            });
+            var tallyText = "";
+            for (t in tallyList) tallyText += tallyList[t].name + "=" + tallyList[t].score + ", ";
+            $("#log").text(tallyText.substr(0, tallyText.length - 2));
+
+            $("#team" + losing_team + "0").val(game.teams[losing_team][1]);
+            $("#team" + losing_team + "1").val(game.teams[losing_team][0]);
+            $("#team" + winning_team + "0").val(game.teams[winning_team][0]);
+            $("#team" + winning_team + "1").val(game.teams[winning_team][1]);
+
+            $("#start-game").text("rematch!");
+            $("#start-test-game").text("test rematch");
+            $("#game-select").show("hide");
+         }
+      });
+
+   };
+
+   var undo = function () {
+      Foos.undo(token, function (game) {
+         var score = Foos.getScore(game);
+
+         // switch sides?
+         if (switched && ((score[0] >= score[1] && score[0] == 4) || (score[1] >= score[0] && score[1] == 4))) {
+            switched = false;
+            for (team in teams) teams[team].reverse();
+            teams.reverse();
+            alert("Switch back!");
+         }
+
+         // if we're undoing a winning goal, let the players know
+         if ((score[0] >= score[1] && score[0] == 9) || (score[1] >= score[0] && score[1] == 9)) {
+            $("#game-select").addClass("hide");
+            alert("Game's not over yet!");
+         }
+
+         updateStats(game);
+      });
+   }
+
+   var goalCaller = function (team, pos) {
+      return function () {
+         goal(team, pos);
+      };
+   }
+
+   var setupCircles = function (color, team) {
+      for (i = 0; i < 11; i++) {
+         var pos = color + i;
+         $("#" + pos).click(goalCaller(team, pos));
+      }
+   };
+
+   var updateOG = function () {
+      ownGoal ? $("#og").addClass("activate") : $("#og").removeClass("activate");
+   };
+
    Foos.setHost('http://rouzbeh.videoplaza.org/foos/');
    setupCircles("w", 0);
    setupCircles("b", 1);
@@ -149,7 +157,11 @@ $(function () {
       var x = [0, 1];
       for (p in players) {
          var pl = players[p];
-         for (i in x) for (j in x) $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
+         for (i in x) { 
+            for (j in x) {
+               $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
+            }
+         }
       }
    });
    var startGameWithPlayers = function (players) {
