@@ -159,7 +159,9 @@ $(function () {
          var pl = players[p];
          for (i in x) { 
             for (j in x) {
-               $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
+               if (pl && (typeof pl !== 'function') && pl !== '') {
+                  $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
+               }
             }
          }
       }
