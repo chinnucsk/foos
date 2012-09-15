@@ -109,11 +109,13 @@ public class HeatMap {
 
    private static Map<String, Map<String, Integer>> prepareHeatMaps() {
       System.out.println("Downloading data from server");
+      Map<String, Map<String, Integer>> heatMaps = new HashMap<String, Map<String, Integer>>();
       Mongo m = null;
       try {
          m = new Mongo(MONGO_HOST, MONGO_PORT);
       } catch (UnknownHostException e) {
          e.printStackTrace();
+         return heatMaps;
       }
       DB db = m.getDB(MONGO_DB);
 
@@ -124,6 +126,8 @@ public class HeatMap {
          while (cursor.hasNext()) {
             DBObject o = cursor.next();
             JSONObject doc = (JSONObject) JSONValue.parse(o.toString());
+            if (!doc.containsKey("name"))
+               continue;
             playerNames.add(doc.get("name").toString());
          }
       } finally {
@@ -135,7 +139,6 @@ public class HeatMap {
       coll = db.getCollection("game");
       cursor = coll.find();
 
-      Map<String, Map<String, Integer>> heatMaps = new HashMap<String, Map<String, Integer>>();
 
       for (String player : playerNames) {
          HashMap<String, Integer> playerHM = new HashMap<String, Integer>();
