@@ -152,7 +152,7 @@ body {
 #table span:active, #og:active, #undo:active {
   background-image: none;
   background-color: white;
-  box-shadow: 0 0 20px 18px rgba(255,255,255,1);
+  box-shadow: 0 0 20px 18px rgba(255,255,255,0.9);
 }
 
 ul#playerlist {

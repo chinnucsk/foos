@@ -2,7 +2,13 @@ window.addEventListener('load', function () {
    setTimeout(scrollTo, 0, 0, 1);
 }, false);
 
-
+// Array Remove - By John Resig (MIT Licensed)
+// http://ejohn.org/blog/javascript-array-remove/
+Array.remove = function(array, from, to) {
+  var rest = array.slice((to || from) + 1 || array.length);
+  array.length = from < 0 ? array.length + from : from;
+  return array.push.apply(array, rest);
+};
 
 $(function () {
    var token;
@@ -12,8 +18,8 @@ $(function () {
    var players = [];
 
    var updateStats = function (game) {
-      for (team in teams) {
-         for (player in teams[team]) {
+      for (var team in teams) {
+         for (var player in teams[team]) {
             $("#player" + team + player).text(teams[team][player]);
          }
       }
@@ -64,10 +70,20 @@ $(function () {
          // switch teams
          if (!switched && (score[0] == 5 || score[1] == 5)) {
             switched = true;
-            for (team in teams) teams[team].reverse();
+            for (var team in teams) {
+               teams[team].reverse();
+            }
+
             teams.reverse();
+            
             var g = false;
-            for (team in teams) for (p in teams[team]) if (teams[team][p] == 'Geries') g = true;
+            for (var team in teams) {
+               for (var p in teams[team]) {
+                  if (teams[team][p] == 'Geries') {
+                     g = true;
+                  }
+               }
+            }
             alert("Switch sides" + (g ? " man, sides!" : "!"));
          }
 
@@ -82,12 +98,12 @@ $(function () {
 
             var tally = Foos.tallyScores(game);
             var tallyList = [];
-            for (t in tally) tallyList.push({name:t, score:tally[t]});
+            for (var t in tally) tallyList.push({name:t, score:tally[t]});
             tallyList.sort(function (a, b) {
                return a.score < b.score;
             });
             var tallyText = "";
-            for (t in tallyList) tallyText += tallyList[t].name + "=" + tallyList[t].score + ", ";
+            for (var t in tallyList) tallyText += tallyList[t].name + "=" + tallyList[t].score + ", ";
             $("#log").text(tallyText.substr(0, tallyText.length - 2));
 
             $("#team" + losing_team + "0").val(game.teams[losing_team][1]);
@@ -155,17 +171,16 @@ $(function () {
          $('ul#playerlist').append(getPlayerLi(player));
       });
       var x = [0, 1];
-      for (p in players) {
+      for (var p in players) {
          var pl = players[p];
-         for (i in x) { 
-            for (j in x) {
-               if (pl && (typeof pl !== 'function') && pl !== '') {
-                  $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
-               }
+         for (var i in x) { 
+            for (var j in x) {
+               $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
             }
          }
       }
    });
+
    var startGameWithPlayers = function (players) {
       Foos.game([
          [players[0], players[1]],
@@ -296,33 +311,52 @@ $(function () {
 
       startGameWithPlayers(getPlayers());
    };
+
+   var getFreePlayerNumber = function () {
+      var numbers = [1,2,3,4];
+      var selected = $('.number');
+      if (selected.length > 0) {
+         $.each(selected, function (i, val) {
+            for (var i = 0; i < numbers.length; i++) {
+               if (numbers[i] == val.innerHTML) {
+                  Array.remove(numbers,i);
+               }
+            };
+         });     
+      }
+      return numbers[0];
+   };
+
    $("#oldschool").click(function () {
       $("ul#playerlist").hide();
       $("#game-select").show();
       $("#oldschool").hide();
       $("#team-suggestion").hide();
    });
+
    $("ul#playerlist").click(function (e) {
-      var player = $(e.target);
-      //this is to unde selection of players 
-      if ($('.number', player).length>0) {
-         $('.number', player).remove();
-         players.remove(players.indexOf(player.data('player')));
-      } else {
-         players.push(player.data('player'));
-         player.append('<span class="number">' + players.length + '</span>');
-      }
-      if (players.length == 4) {
-         var teamSuggestionElement = $("#team-suggestion");
-         if (teamSuggestionElement.is(":visible")) {
-            teamSuggestionElement.hide();
-            $("ul#playerlist").hide();
-            $("#oldschool").addClass('hide');
-            FoosSetCL('game');
-            startGameWithPlayers(players);
+      if(e.target && e.target.nodeName == "LI") {
+         var player = $(e.target);
+         //this is to undo selection of players 
+         if ($('.number', player).length > 0) {
+            Array.remove(players, players.indexOf(player.data('player')));
+            $('.number', player).remove();
          } else {
-            setPlayers(players);
-            suggestTeams();
+            players.push(player.data('player'));
+            player.append('<span class="number">' + getFreePlayerNumber() + '</span>');
+         }
+         if (players.length == 4) {
+            var teamSuggestionElement = $("#team-suggestion");
+            if (teamSuggestionElement.is(":visible")) {
+               teamSuggestionElement.hide();
+               $("ul#playerlist").hide();
+               $("#oldschool").addClass('hide');
+               FoosSetCL('game');
+               startGameWithPlayers(players);
+            } else {
+               setPlayers(players);
+               suggestTeams();
+            }
          }
       }
    });
