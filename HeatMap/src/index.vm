@@ -84,7 +84,10 @@
 </head>
 
 <body>
-<h1 id='top'>Foos Heat Maps</h1>
+   <h1 id='top'>Foos Heat Maps</h1>
+   <small>Last update: $date.get('yyyy-MM-dd HH:mm') </small>
+   <br/>
+
    #foreach( $player in $players )
    <a href='#$player'>$player</a>
    #end
@@ -93,7 +96,7 @@
       #set( $max = $maxvalues.get($player))
    <h2 id='$player'>
       $player &nbsp;
-       <a class="jumptotop" href='#top'>Jump to top</a>
+      <a class="jumptotop" href='#top'>Jump to top</a>
    </h2>
 
    <div class="heatmap">
@@ -111,8 +114,8 @@
                               #set( $color_class = "white")
                            #end
                            #set( $red = $heatmaps.get($player).get($p) * 255 / $max  )
-                           #set( $blue = 255 - ($heatmaps.get($player).get($p) * 255 / $max  ))
-                           <div class="figure" title="$heatmaps.get($player).get($p)" style="background-color: rgb($red, 00, $blue );">
+                           #set( $blue = 255 - $red )
+                           <div class="figure" title="$heatmaps.get($player).get($p)" style="background-color: rgb($red, 0, $blue );">
                               <div class="centerdot $color_class"></div>
                            </div>
                         #end

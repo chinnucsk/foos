@@ -6,8 +6,8 @@ import com.mongodb.Mongo;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.tools.generic.DateTool;
 import org.apache.velocity.tools.generic.MathTool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -223,6 +222,7 @@ public class HeatMap {
       context.put("maxvalues", getMaxValues(heatMaps));
       context.put("positions", POSITION_MAP);
       context.put("math", new MathTool());
+      context.put("date", new DateTool());
 
       try {
          Template template = engine.getTemplate("index.vm"); // Velocity.getTemplate("index.vm");
