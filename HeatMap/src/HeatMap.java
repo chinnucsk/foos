@@ -42,33 +42,33 @@ public class HeatMap {
       // goalkeeper
       put("w0", new int[] { 0, 2 }); // w0
       // d-line
-      put("w1", new int[] { 1, 3 }); // w1
-      put("w2", new int[] { 1, 1 }); // w2
+      put("w1", new int[] { 1, 1 }); // w1
+      put("w2", new int[] { 1, 3 }); // w2
       // midfield
-      put("w3", new int[] { 3, 4 }); // w3
-      put("w4", new int[] { 3, 3 }); // w4
+      put("w3", new int[] { 3, 0 }); // w3
+      put("w4", new int[] { 3, 1 }); // w4
       put("w5", new int[] { 3, 2 }); // w5
-      put("w6", new int[] { 3, 1 }); // w6
-      put("w7", new int[] { 3, 0 }); // w7
+      put("w6", new int[] { 3, 3 }); // w6
+      put("w7", new int[] { 3, 4 }); // w7
       // o-line
-      put("w8", new int[] { 5, 3 }); // w8
+      put("w8", new int[] { 5, 1 }); // w8
       put("w9", new int[] { 5, 2 }); // w9
-      put("w10", new int[] { 5, 1 });  // w10
+      put("w10", new int[] { 5, 3 });  // w10
 
       put("b0", new int[] { 7, 2 }); // b0
       // d-line
-      put("b1", new int[] { 6, 1 }); // b1
-      put("b2", new int[] { 6, 3 }); // b2
+      put("b1", new int[] { 6, 3 }); // b1
+      put("b2", new int[] { 6, 1 }); // b2
       // midfield
-      put("b3", new int[] { 4, 0 }); // b3
-      put("b4", new int[] { 4, 1 }); // b4
+      put("b3", new int[] { 4, 4 }); // b3
+      put("b4", new int[] { 4, 3 }); // b4
       put("b5", new int[] { 4, 2 }); // b5
-      put("b6", new int[] { 4, 3 }); // b6
-      put("b7", new int[] { 4, 4 }); // b7
+      put("b6", new int[] { 4, 1 }); // b6
+      put("b7", new int[] { 4, 0 }); // b7
       // o-line
-      put("b8", new int[] { 2, 1 }); // b8
+      put("b8", new int[] { 2, 3 }); // b8
       put("b9", new int[] { 2, 2 }); // b9
-      put("b10", new int[] { 2, 3 });  // b10
+      put("b10", new int[] { 2, 1 });  // b10
    }};
 
 

@@ -94,6 +94,7 @@
 
       #foreach( $player in $players )
          #set( $max = $maxvalues.get($player))
+         #set( $heatmap = $heatmaps.get($player))
          <h2 id='$player'>
             $player &nbsp;
             <a class="jumptotop" href='#top'>Jump to top</a>
@@ -113,9 +114,9 @@
                                  #if( $p.startsWith("w"))
                                     #set( $color_class = "white")
                                  #end
-                                 #set( $red = $heatmaps.get($player).get($p) * 255 / $max  )
+                                 #set( $red = $heatmap.get($p) * 255 / $max  )
                                  #set( $blue = 255 - $red )
-                                 <div class="figure" title="$heatmaps.get($player).get($p)" style="background-color: rgb($red, 0, $blue );">
+                                 <div class="figure" title="$heatmap.get($p)" style="background-color: rgb($red, 0, $blue );">
                                     <div class="centerdot $color_class"></div>
                                  </div>
                               #end
@@ -129,9 +130,75 @@
                <div class="scale">
                </div>
                <p class="minlabel">0</p>
-
                <p class="maxlabel">$max</p>
             </div>
+            <!--
+            <div class="goalcounts">
+               <table>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('b'))
+                        <th>
+                           $pos
+                        </th>
+                        #end
+                     #end
+                  </tr>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('b'))
+                           #set( $goals = $heatmap.get($pos) )
+                           <td>
+                           $goals
+                           </td>
+                        #end
+                     #end
+                  </tr>
+               </table>
+               <table>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('w'))
+                           <th>
+                              $pos
+                           </th>
+                        #end
+                     #end
+                  </tr>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('w'))
+                           #set( $goals = $heatmap.get($pos) )
+                           <td>
+                              $goals
+                           </td>
+                        #end
+                     #end
+                  </tr>
+               </table>
+               <table>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('o'))
+                           <th>
+                              $pos
+                           </th>
+                        #end
+                     #end
+                  </tr>
+                  <tr>
+                     #foreach($pos in $heatmap.keySet())
+                        #if($pos.startsWith('o'))
+                           #set( $goals = $heatmap.get($pos) )
+                           <td>
+                              $goals
+                           </td>
+                        #end
+                     #end
+                  </tr>
+               </table>
+            </div>
+            -->
          </div>
       #end
    </body>
