@@ -55,81 +55,6 @@ public class FoosballDB {
       }
    }
 
-   public List<Game> getGames(Date startDate, Date endDate) {
-      DBCollection collection = db.getCollection("game");
-      DBCursor cursor = collection.find();
-      List<Game> result = new ArrayList<Game>();
-      winsPerPlayer = new HashMap<String, Long>();
-      lossesPerPlayer = new HashMap<String, Long>();
-      goalsPerPlayer = new HashMap<String, Long>();
-      long count = 0;
-      for (DBObject object : cursor) {
-         try {
-            Date started = (Date) object.get("date");
-            // TODO: filter dates in find() and remove this code
-            if (started.before(startDate) || started.after(endDate))
-               continue;
-
-            List<Integer> score = (List) object.get("score");
-            List<DBObject> scores = (List) object.get("scores");
-            List teams = (List) object.get("teams");
-            List<String> homeTeam = (List) teams.get(0);
-            List<String> awayTeam = (List) teams.get(1);
-            result.add(new Game(started, homeTeam.get(0), homeTeam.get(1), awayTeam.get(0), awayTeam.get(1), score.get(0), score.get(1)));
-            List<String> winningTeam = score.get(0) == 10 ? homeTeam : awayTeam;
-            List<String> losingTeam = score.get(0) != 10 ? homeTeam : awayTeam;
-
-            for (String p : winningTeam)
-               increase(winsPerPlayer, p);
-            for (String p : losingTeam)
-               increase(lossesPerPlayer, p);
-
-            for (DBObject s : scores) {
-               increase(goalsPerPlayer, (String) s.get("player"));
-            }
-         } catch (Exception _) {
-            // Nothing to do
-         }
-         count++;
-      }
-
-      System.err.println("Successfully converted " + count + " games.");
-
-      return result;
-   }
-
-   public List<Player> getPlayers() {
-      List<Player> result = new ArrayList<Player>();
-      DBCollection collection = db.getCollection("player");
-      DBCursor cursor = collection.find();
-      long count = 0;
-      for (DBObject object : cursor) {
-         try {
-            String name = (String) object.get("name");
-            result.add(new Player(name));
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-
-         count++;
-      }
-
-      System.err.println("Successfully converted " + count + " players.");
-
-      return result;
-   }
-
-   public SortedMap<Date, Game> getProcessedGames() {
-      return processedGames;
-   }
-
-   public void increase(Map<String, Long> map, String key) {
-      if (map.get(key) != null)
-         map.put(key, map.get(key) + 1);
-      else
-         map.put(key, 1L);
-   }
-
    public String recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr) {
       Date startDate = createDate(startDateStr, DEFAULT_START_DATE);
       Date endDate = createDate(endDateStr, DEFAULT_END_DATE);
@@ -206,6 +131,81 @@ public class FoosballDB {
       }
       sb.append("]");
       return sb.toString();
+   }
+
+   public List<Game> getGames(Date startDate, Date endDate) {
+      DBCollection collection = db.getCollection("game");
+      DBCursor cursor = collection.find();
+      List<Game> result = new ArrayList<Game>();
+      winsPerPlayer = new HashMap<String, Long>();
+      lossesPerPlayer = new HashMap<String, Long>();
+      goalsPerPlayer = new HashMap<String, Long>();
+      long count = 0;
+      for (DBObject object : cursor) {
+         try {
+            Date started = (Date) object.get("date");
+            // TODO: filter dates in find() and remove this code
+            if (started.before(startDate) || started.after(endDate))
+               continue;
+
+            List<Integer> score = (List) object.get("score");
+            List<DBObject> scores = (List) object.get("scores");
+            List teams = (List) object.get("teams");
+            List<String> homeTeam = (List) teams.get(0);
+            List<String> awayTeam = (List) teams.get(1);
+            result.add(new Game(started, homeTeam.get(0), homeTeam.get(1), awayTeam.get(0), awayTeam.get(1), score.get(0), score.get(1)));
+            List<String> winningTeam = score.get(0) == 10 ? homeTeam : awayTeam;
+            List<String> losingTeam = score.get(0) != 10 ? homeTeam : awayTeam;
+
+            for (String p : winningTeam)
+               increase(winsPerPlayer, p);
+            for (String p : losingTeam)
+               increase(lossesPerPlayer, p);
+
+            for (DBObject s : scores) {
+               increase(goalsPerPlayer, (String) s.get("player"));
+            }
+         } catch (Exception _) {
+            // Nothing to do
+         }
+         count++;
+      }
+
+      System.err.println("Successfully converted " + count + " games.");
+
+      return result;
+   }
+
+   public List<Player> getPlayers() {
+      List<Player> result = new ArrayList<Player>();
+      DBCollection collection = db.getCollection("player");
+      DBCursor cursor = collection.find();
+      long count = 0;
+      for (DBObject object : cursor) {
+         try {
+            String name = (String) object.get("name");
+            result.add(new Player(name));
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+
+         count++;
+      }
+
+      System.err.println("Successfully converted " + count + " players.");
+
+      return result;
+   }
+
+   public SortedMap<Date, Game> getProcessedGames() {
+      return processedGames;
+   }
+
+   public void increase(Map<String, Long> map, String key) {
+      if (map.get(key) != null)
+         map.put(key, map.get(key) + 1);
+      else
+         map.put(key, 1L);
    }
 
    public void updatePlayers(List<Player> players) {
