@@ -4,8 +4,9 @@ public class Player {
    private final String name;
 
    private double skill = 25d;
-
    private double uncertainty = 8.333333333333d;
+
+   private Double trueSkill; // only used if explicitly set
 
    private long goals;
    private long wins;
@@ -15,12 +16,13 @@ public class Player {
       this.name = name;
    }
 
-   public Player(String name, Double mu, Double sigma) {
-      this.name = name;
-      if (mu != null)
-         skill = mu;
-      if (sigma != null)
-         uncertainty = sigma;
+   public Player(Player other) {
+      name = other.getName();
+      skill = other.getSkill();
+      uncertainty = other.getUncertainty();
+      goals = other.getGoals();
+      wins = other.getWins();
+      losses = other.getLosses();
    }
 
    public String getName() {
@@ -32,7 +34,7 @@ public class Player {
    }
 
    public double getTrueSkill() {
-      return skill - 3 * uncertainty;
+      return trueSkill == null ? skill - (3 * uncertainty) : trueSkill;
    }
 
    public double getUncertainty() {
@@ -45,6 +47,10 @@ public class Player {
 
    public void setUncertainty(double uncertainty) {
       this.uncertainty = uncertainty;
+   }
+
+   public void setTrueSkill(double trueSkill) {
+      this.trueSkill = trueSkill;
    }
 
    @Override
