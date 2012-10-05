@@ -36,10 +36,6 @@
    var columns = [
       'Rank', 'Name', 'Games played', 'Wins', 'Losses', 'Winning pct', 'Goals', 'Goals per game', 'TrueSkill', 'mu', 'sigma', ];
 
-   var leaderboardColumns = _.reject(columns, function (column) {
-      return column == 'mu' || column == 'sigma'
-   });
-
    var attrFrom = function (column) {
       return column.toLowerCase().replace(/ /g, '_');
    };
@@ -94,10 +90,6 @@
       if (isChecked($('#thisWeek'))) return Mode.THIS_WEEK;
 
       return Mode.ALL_GAMES;
-   }
-
-   function isLeaderBoard(mode) {
-      return mode == Mode.THIS_WEEK || mode == Mode.TODAY;
    }
 
    function startOfDay(date) {
@@ -256,75 +248,6 @@
          });
          $('tbody', 'table', this.el).append(itemView.render().el);
       },
-
-      leaderBoard:function (view, c) {
-         var allGames = copyCollection(c);
-
-         view.collection.url = getPlayerListUrl(getMode());
-         view.collection.fetch({
-            success:function (c, r) {
-               view.calculateLeaderBoard(view, allGames, c);
-            },
-            error:function (c, r) {
-               log(LogLevel.ERROR, 'FAIL' + r);
-               window.err = r;
-            }
-         });
-      },
-
-      calculateLeaderBoard:function (view, allGames, gamesExcludingPeriod) {
-         var leaders = new Backbone.Collection();
-         gamesExcludingPeriod.each(function (player) {
-            var one = findPlayer(allGames, player.get('name'));
-            if (one != undefined) {
-               var delta = playerDelta(one, player);
-               if (delta.get('games_played') >= 1)
-                  leaders.add(delta);
-            }
-         });
-
-         leaders.models = _.sortBy(leaders.models, function (leader) {
-            return leader.get('trueskill') * -1
-         }); // sort descending
-         leaders.each(function (leader, index) {
-            leader.attributes.rank = index + 1
-         });
-         view.renderLeaderBoard(view, leaders);
-      },
-
-      renderLeaderBoard:function (view, leaders) {
-         log(LogLevel.DEBUG, 'rendering leaderboard');
-         var table = $('table');
-         table.html('');
-
-         var header = $('<thead />');
-         var headerRow = $('<tr />');
-         _.each(leaderboardColumns, function (column) {
-            headerRow.append('<th>' + column + '</th>')
-         });
-         header.append(headerRow);
-
-         log(LogLevel.DEBUG, 'rendering leaders');
-         var body = $('<tbody />');
-         _.each(leaders.models, function (leader) {
-            view.appendLeader(body, leader)
-         });
-
-         table.append(header);
-         table.append(body);
-      },
-
-      appendLeader:function (element, leader) {
-         var row = $('<tr />');
-         _.each(leaderboardColumns, function (column) {
-            var value = leader.get(attrFrom(column));
-            if (column == 'TrueSkill')
-               value = value.toFixed(4);
-
-            row.append('<td>' + value + '</td>');
-         });
-         element.append(row);
-      }
    });
 
    var listView = new PlayerListView();
