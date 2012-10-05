@@ -39,7 +39,7 @@ public class FoosballDB {
    private DB db;
 
    private SortedMap<Date, Game> processedGames;
-   private Map<String, Player> players = new HashMap<String, Player>();
+   private Map<String, Player> players;
 
    public static void main(String[] args) {
       String startDate = args.length >= 1 ? args[0] : null;
@@ -76,9 +76,7 @@ public class FoosballDB {
             + (leaderboardStartDate == null ? "" : "; leaderboard starting " + leaderboardStartDate.toString())
       );
 
-      for (Player player : getPlayers())
-         players.put(player.getName(), player);
-
+      players = new HashMap<String, Player>();
       processedGames = new TreeMap<Date, Game>();
       for (Game game : getGames(startDate, endDate))
          getProcessedGames().put(game.getStarted(), game);
@@ -87,13 +85,13 @@ public class FoosballDB {
 
       for (Entry<Date, Game> entry : getProcessedGames().entrySet()) {
          Game game = entry.getValue();
-         Set<String> P = new HashSet<String>();
-         P.addAll(Arrays.asList(game.getHomeTeam()));
-         P.addAll(Arrays.asList(game.getAwayTeam()));
-         if (P.size() == 4) {
+         Set<String> playersInThisGame = new HashSet<String>();
+         playersInThisGame.addAll(Arrays.asList(game.getHomeTeam()));
+         playersInThisGame.addAll(Arrays.asList(game.getAwayTeam()));
+         if (playersInThisGame.size() == 4) {
             recordGame(players, ratings, game);
          } else {
-            //System.err.println("Disqualifying non-4-player game: " + game);
+            System.err.println("Disqualifying non-4-player game: " + game);
          }
       }
       updatePlayers(new ArrayList<Player>(players.values()));
@@ -179,27 +177,6 @@ public class FoosballDB {
       }
 
       return player;
-   }
-
-   public List<Player> getPlayers() {
-      List<Player> result = new ArrayList<Player>();
-      DBCollection collection = db.getCollection("player");
-      DBCursor cursor = collection.find();
-      long count = 0;
-      for (DBObject object : cursor) {
-         try {
-            String name = (String) object.get("name");
-            result.add(new Player(name));
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-
-         count++;
-      }
-
-      System.err.println("Successfully converted " + count + " players.");
-
-      return result;
    }
 
    public SortedMap<Date, Game> getProcessedGames() {
