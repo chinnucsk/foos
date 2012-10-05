@@ -57,7 +57,7 @@ public class Player {
 
    @Override
    public String toString() {
-      return getName() + " (" + skill + ", " + uncertainty + "): TrueSkill = " + (skill - 3 * uncertainty);
+      return getName() + " (" + skill + ", " + uncertainty + "): TrueSkill = " + getTrueSkill();
    }
 
    public void setGoals(long goals) {
@@ -102,5 +102,20 @@ public class Player {
 
    public void setRank(int rank) {
       this.rank = rank;
+   }
+
+   public Player minus(Player other) {
+      if (other == null)
+         return new Player(this);
+
+      Player delta = new Player(name);
+      delta.setWins(wins - other.getWins());
+      delta.setLosses(losses - other.getLosses());
+      delta.setGoals(goals - other.getGoals());
+      delta.setSkill(skill - other.getSkill());
+      delta.setUncertainty(uncertainty - other.getUncertainty());
+      delta.setTrueSkill(getTrueSkill() - other.getTrueSkill());
+
+      return delta;
    }
 }

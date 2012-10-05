@@ -51,4 +51,54 @@ public class PlayerTest {
 
       assertEquals(1d, p2.getTrueSkill(), 0);
    }
+
+   @Test
+   public void testMinus() throws Exception {
+      Player p1 = new Player("foo");
+      p1.setWins(123);
+      p1.setLosses(456);
+      p1.setGoals(789);
+      p1.setTrueSkill(27d);
+      p1.setSkill(2d);
+      p1.setUncertainty(3d);
+
+      Player p2 = new Player("bar");
+      p2.setWins(112);
+      p2.setLosses(445);
+      p2.setGoals(778);
+      p2.setTrueSkill(16d);
+      p2.setSkill(1d);
+      p2.setUncertainty(2d);
+
+      Player p3 = p1.minus(p2);
+
+      assertEquals("foo", p3.getName());
+      assertEquals(11, p3.getWins());
+      assertEquals(11, p3.getLosses());
+      assertEquals(11, p3.getGoals());
+      assertEquals(11d, p3.getTrueSkill(), 0);
+      assertEquals(1d, p3.getSkill(), 0);
+      assertEquals(1d, p3.getUncertainty(), 0);
+   }
+
+   @Test
+   public void minusReturnsCopyForNull() throws Exception {
+      Player p1 = new Player("foo");
+      p1.setWins(123);
+      p1.setLosses(456);
+      p1.setGoals(789);
+      p1.setTrueSkill(27d);
+      p1.setSkill(10d);
+      p1.setUncertainty(3d);
+
+      Player p2 = p1.minus(null);
+
+      assertEquals("foo", p2.getName());
+      assertEquals(123, p2.getWins());
+      assertEquals(456, p2.getLosses());
+      assertEquals(789, p2.getGoals());
+      assertEquals(1d, p2.getTrueSkill(), 0);
+      assertEquals(10d, p2.getSkill(), 0);
+      assertEquals(3d, p2.getUncertainty(), 0);
+   }
 }
