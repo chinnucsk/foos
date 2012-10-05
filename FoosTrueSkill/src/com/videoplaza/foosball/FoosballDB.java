@@ -79,11 +79,11 @@ public class FoosballDB {
       players = new HashMap<String, Player>();
       processedGames = new TreeMap<Date, Game>();
       for (Game game : getGames(startDate, endDate))
-         getProcessedGames().put(game.getStarted(), game);
+         processedGames.put(game.getStarted(), game);
 
       FoosballRating ratings = new FoosballRating(players.values());
 
-      for (Entry<Date, Game> entry : getProcessedGames().entrySet()) {
+      for (Entry<Date, Game> entry : processedGames.entrySet()) {
          Game game = entry.getValue();
          Set<String> playersInThisGame = new HashSet<String>();
          playersInThisGame.addAll(Arrays.asList(game.getHomeTeam()));
@@ -169,6 +169,10 @@ public class FoosballDB {
       return result;
    }
 
+   public SortedMap<Date, Game> getProcessedGames() {
+      return processedGames;
+   }
+
    private Player getPlayer(String name) {
       Player player = players.get(name);
       if (player == null) {
@@ -177,10 +181,6 @@ public class FoosballDB {
       }
 
       return player;
-   }
-
-   public SortedMap<Date, Game> getProcessedGames() {
-      return processedGames;
    }
 
    public void updatePlayers(List<Player> players) {
