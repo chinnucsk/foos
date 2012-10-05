@@ -94,16 +94,20 @@ public class FoosballDB {
       }
       updatePlayers(new ArrayList<Player>(players.values()));
 
-      List<Player> leaderBoard = new ArrayList<Player>();
-      leaderBoard.addAll(players.values());
-      Collections.sort(leaderBoard, new Comparator<Player>() {
+      return toJson(playerStats(), minRequiredGames);
+   }
+
+   private List<Player> playerStats() {
+      List<Player> stats = new ArrayList<Player>(players.values());
+
+      Collections.sort(stats, new Comparator<Player>() {
          @Override
-         public int compare(Player o1, Player o2) {
-            return o1.getTrueSkill() > o2.getTrueSkill() ? -1 : 1;
+         public int compare(Player a, Player b) {
+            return a.getTrueSkill() > b.getTrueSkill() ? -1 : 1;
          }
       });
 
-      return toJson(leaderBoard, minRequiredGames);
+      return stats;
    }
 
    private String toJson(List<Player> players, int minRequiredGames) {
