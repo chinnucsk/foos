@@ -40,6 +40,7 @@ public class FoosballDB {
 
    private SortedMap<Date, Game> processedGames;
    private Map<String, Player> players;
+   private Map<String, Player> playersExceptLeaderboard;
 
    public static void main(String[] args) {
       String startDate = args.length >= 1 ? args[0] : null;
@@ -77,8 +78,10 @@ public class FoosballDB {
       );
 
       players = new HashMap<String, Player>();
+      playersExceptLeaderboard = new HashMap<String, Player>();
+
       processedGames = new TreeMap<Date, Game>();
-      for (Game game : processGames(startDate, endDate))
+      for (Game game : processGames(startDate, endDate, leaderboardStartDate))
          processedGames.put(game.getStarted(), game);
 
       FoosballRating ratings = new FoosballRating(players.values());
@@ -88,6 +91,15 @@ public class FoosballDB {
 
          if (isFourPlayerGame(game)) {
             recordGame(players, ratings, game);
+
+            if (leaderboardStartDate != null) {
+               if (game.getStarted().before(leaderboardStartDate))
+                  recordGame(playersExceptLeaderboard, ratings, game);
+               else
+                  System.err.println(
+                     "leaderboard from " + leaderboardStartDate.toString() + ": skipping game starting at " + game.getStarted().toString()
+                  );
+            }
          } else {
             System.err.println("Disqualifying non-4-player game: " + game);
          }
@@ -152,7 +164,7 @@ public class FoosballDB {
       return playersInThisGame.size() == 4;
    }
 
-   public List<Game> processGames(Date startDate, Date endDate) {
+   public List<Game> processGames(Date startDate, Date endDate, Date leaderboardStartDate) {
       DBCollection collection = db.getCollection("game");
       DBCursor cursor = collection.find();
       List<Game> result = new ArrayList<Game>();
@@ -172,14 +184,27 @@ public class FoosballDB {
             List<String> winningTeam = score.get(0) == 10 ? homeTeam : awayTeam;
             List<String> losingTeam = score.get(0) != 10 ? homeTeam : awayTeam;
 
-            for (String name : winningTeam)
+            for (String name : winningTeam) {
                getPlayer(name).win();
 
-            for (String name : losingTeam)
+               if (leaderboardStartDate != null)
+                  getPlayerExceptLeaderboard(name).win();
+            }
+
+            for (String name : losingTeam) {
                getPlayer(name).lose();
 
-            for (DBObject s : scores)
-               getPlayer((String) s.get("player")).score();
+               if (leaderboardStartDate != null)
+                  getPlayerExceptLeaderboard(name).lose();
+            }
+
+            for (DBObject s : scores) {
+               String name = (String) s.get("player");
+               getPlayer(name).score();
+
+               if (leaderboardStartDate != null)
+                  getPlayerExceptLeaderboard(name).score();
+            }
          } catch (Exception _) {
             // Nothing to do
          }
@@ -196,13 +221,11 @@ public class FoosballDB {
    }
 
    private Player getPlayer(String name) {
-      Player player = players.get(name);
-      if (player == null) {
-         player = new Player(name);
-         players.put(name, player);
-      }
+      return getPlayerFrom(players, name);
+   }
 
-      return player;
+   private Player getPlayerExceptLeaderboard(String name) {
+      return getPlayerFrom(playersExceptLeaderboard, name);
    }
 
    public void updatePlayers(List<Player> players) {
@@ -221,6 +244,16 @@ public class FoosballDB {
 
          collection.update(query, operation);
       }
+   }
+
+   private Player getPlayerFrom(Map<String, Player> map, String name) {
+      Player player = map.get(name);
+      if (player == null) {
+         player = new Player(name);
+         map.put(name, player);
+      }
+
+      return player;
    }
 
    public static Date createDate(String str, Date fallback) {
