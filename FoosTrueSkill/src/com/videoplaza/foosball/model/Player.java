@@ -82,4 +82,15 @@ public class Player {
       return losses;
    }
 
+   public void win() {
+      wins++;
+   }
+
+   public void lose() {
+      losses++;
+   }
+
+   public void score() {
+      goals++;
+   }
 }
