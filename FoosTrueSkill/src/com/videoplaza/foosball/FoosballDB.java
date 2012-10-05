@@ -38,11 +38,8 @@ public class FoosballDB {
 
    private DB db;
 
-   private Map<String, Long> goalsPerPlayer;
-   private Map<String, Long> winsPerPlayer;
-   private Map<String, Long> lossesPerPlayer;
-
    private SortedMap<Date, Game> processedGames;
+   private Map<String, Player> players = new HashMap<String, Player>();
 
    public FoosballDB(String host, String database) {
       try {
@@ -68,7 +65,6 @@ public class FoosballDB {
             + endDate.toString()
       );
 
-      Map<String, Player> players = new HashMap<String, Player>();
       for (Player player : getPlayers())
          players.put(player.getName(), player);
 
@@ -104,15 +100,7 @@ public class FoosballDB {
       sb.append("[");
       boolean first = true;
       for (Player player : leaderBoard) {
-         Long wins = winsPerPlayer.get(player.getName());
-         if (wins == null)
-            wins = 0L;
-
-         Long losses = lossesPerPlayer.get(player.getName());
-         if (losses == null)
-            losses = 0L;
-
-         if ((wins + losses) < minRequiredGames)
+         if ((player.getWins() + player.getLosses()) < minRequiredGames)
             continue;
 
          if (!first)
@@ -123,9 +111,9 @@ public class FoosballDB {
          json(sb, "trueskill", player.getTrueSkill()).append(",");
          json(sb, "mu", player.getSkill()).append(",");
          json(sb, "sigma", player.getUncertainty()).append(",");
-         json(sb, "wins", wins).append(",");
-         json(sb, "losses", losses).append(",");
-         json(sb, "goals", goalsPerPlayer.get(player.getName()));
+         json(sb, "wins", player.getWins()).append(",");
+         json(sb, "losses", player.getLosses()).append(",");
+         json(sb, "goals", player.getGoals());
          sb.append("}\n");
          first = false;
       }
@@ -137,9 +125,6 @@ public class FoosballDB {
       DBCollection collection = db.getCollection("game");
       DBCursor cursor = collection.find();
       List<Game> result = new ArrayList<Game>();
-      winsPerPlayer = new HashMap<String, Long>();
-      lossesPerPlayer = new HashMap<String, Long>();
-      goalsPerPlayer = new HashMap<String, Long>();
       long count = 0;
       for (DBObject object : cursor) {
          try {
@@ -157,14 +142,14 @@ public class FoosballDB {
             List<String> winningTeam = score.get(0) == 10 ? homeTeam : awayTeam;
             List<String> losingTeam = score.get(0) != 10 ? homeTeam : awayTeam;
 
-            for (String p : winningTeam)
-               increase(winsPerPlayer, p);
-            for (String p : losingTeam)
-               increase(lossesPerPlayer, p);
+            for (String name : winningTeam)
+               getPlayer(name).win();
 
-            for (DBObject s : scores) {
-               increase(goalsPerPlayer, (String) s.get("player"));
-            }
+            for (String name : losingTeam)
+               getPlayer(name).lose();
+
+            for (DBObject s : scores)
+               getPlayer((String) s.get("player")).score();
          } catch (Exception _) {
             // Nothing to do
          }
@@ -174,6 +159,16 @@ public class FoosballDB {
       System.err.println("Successfully converted " + count + " games.");
 
       return result;
+   }
+
+   private Player getPlayer(String name) {
+      Player player = players.get(name);
+      if (player == null) {
+         player = new Player(name);
+         players.put(name, player);
+      }
+
+      return player;
    }
 
    public List<Player> getPlayers() {
@@ -199,13 +194,6 @@ public class FoosballDB {
 
    public SortedMap<Date, Game> getProcessedGames() {
       return processedGames;
-   }
-
-   public void increase(Map<String, Long> map, String key) {
-      if (map.get(key) != null)
-         map.put(key, map.get(key) + 1);
-      else
-         map.put(key, 1L);
    }
 
    public void updatePlayers(List<Player> players) {
