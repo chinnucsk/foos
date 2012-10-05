@@ -110,22 +110,29 @@ public class FoosballDB {
          if ((player.getWins() + player.getLosses()) < minRequiredGames)
             continue;
 
+         player.setRank(rank++);
+
          if (!first)
             sb.append(",");
-         sb.append("{");
-         json(sb, "rank", rank++).append(",");
-         json(sb, "name", player.getName()).append(",");
-         json(sb, "trueskill", player.getTrueSkill()).append(",");
-         json(sb, "mu", player.getSkill()).append(",");
-         json(sb, "sigma", player.getUncertainty()).append(",");
-         json(sb, "wins", player.getWins()).append(",");
-         json(sb, "losses", player.getLosses()).append(",");
-         json(sb, "goals", player.getGoals());
-         sb.append("}\n");
+         appendPlayerJson(sb, player);
+
          first = false;
       }
       sb.append("]");
       return sb.toString();
+   }
+
+   private void appendPlayerJson(StringBuilder sb, Player player) {
+      sb.append("{");
+      json(sb, "rank", player.getRank()).append(",");
+      json(sb, "name", player.getName()).append(",");
+      json(sb, "trueskill", player.getTrueSkill()).append(",");
+      json(sb, "mu", player.getSkill()).append(",");
+      json(sb, "sigma", player.getUncertainty()).append(",");
+      json(sb, "wins", player.getWins()).append(",");
+      json(sb, "losses", player.getLosses()).append(",");
+      json(sb, "goals", player.getGoals());
+      sb.append("}\n");
    }
 
    private boolean isFourPlayerGame(Game game) {

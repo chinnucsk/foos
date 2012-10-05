@@ -3,6 +3,8 @@ package com.videoplaza.foosball.model;
 public class Player {
    private final String name;
 
+   private int rank = 0;
+
    private double skill = 25d;
    private double uncertainty = 8.333333333333d;
 
@@ -92,5 +94,13 @@ public class Player {
 
    public void score() {
       goals++;
+   }
+
+   public int getRank() {
+      return rank;
+   }
+
+   public void setRank(int rank) {
+      this.rank = rank;
    }
 }
