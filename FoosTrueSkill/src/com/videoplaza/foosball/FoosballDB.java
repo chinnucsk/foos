@@ -78,17 +78,15 @@ public class FoosballDB {
 
       players = new HashMap<String, Player>();
       processedGames = new TreeMap<Date, Game>();
-      for (Game game : getGames(startDate, endDate))
+      for (Game game : processGames(startDate, endDate))
          processedGames.put(game.getStarted(), game);
 
       FoosballRating ratings = new FoosballRating(players.values());
 
       for (Entry<Date, Game> entry : processedGames.entrySet()) {
          Game game = entry.getValue();
-         Set<String> playersInThisGame = new HashSet<String>();
-         playersInThisGame.addAll(Arrays.asList(game.getHomeTeam()));
-         playersInThisGame.addAll(Arrays.asList(game.getAwayTeam()));
-         if (playersInThisGame.size() == 4) {
+
+         if (isFourPlayerGame(game)) {
             recordGame(players, ratings, game);
          } else {
             System.err.println("Disqualifying non-4-player game: " + game);
@@ -130,7 +128,15 @@ public class FoosballDB {
       return sb.toString();
    }
 
-   public List<Game> getGames(Date startDate, Date endDate) {
+   private boolean isFourPlayerGame(Game game) {
+      Set<String> playersInThisGame = new HashSet<String>();
+      playersInThisGame.addAll(Arrays.asList(game.getHomeTeam()));
+      playersInThisGame.addAll(Arrays.asList(game.getAwayTeam()));
+
+      return playersInThisGame.size() == 4;
+   }
+
+   public List<Game> processGames(Date startDate, Date endDate) {
       DBCollection collection = db.getCollection("game");
       DBCursor cursor = collection.find();
       List<Game> result = new ArrayList<Game>();
