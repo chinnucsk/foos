@@ -102,11 +102,16 @@ public class FoosballDB {
             return o1.getTrueSkill() > o2.getTrueSkill() ? -1 : 1;
          }
       });
+
+      return toJson(leaderBoard, minRequiredGames);
+   }
+
+   private String toJson(List<Player> players, int minRequiredGames) {
       StringBuilder sb = new StringBuilder();
       int rank = 1;
       sb.append("[");
       boolean first = true;
-      for (Player player : leaderBoard) {
+      for (Player player : players) {
          if ((player.getWins() + player.getLosses()) < minRequiredGames)
             continue;
 
