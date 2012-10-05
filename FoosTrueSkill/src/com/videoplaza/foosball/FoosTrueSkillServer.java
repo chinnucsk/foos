@@ -41,9 +41,10 @@ public class FoosTrueSkillServer extends HttpServlet {
    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
       String startDate = req.getParameter(Param.START_DATE);
       String endDate = req.getParameter(Param.END_DATE);
+      String leaderboardStartDate = req.getParameter(Param.LEADERBOARD_START_DATE);
       String minRequiredGames = req.getParameter(Param.MIN_REQ_GAMES);
 
-      String output = db.recalculate(startDate, endDate, minRequiredGames);
+      String output = db.recalculate(startDate, endDate, minRequiredGames, leaderboardStartDate);
 
       Cors.addHeaders(req, resp);
 

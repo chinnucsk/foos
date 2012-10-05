@@ -52,9 +52,10 @@ public class FoosballDB {
       }
    }
 
-   public String recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr) {
+   public String recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr, String leaderboardStartDateStr) {
       Date startDate = createDate(startDateStr, DEFAULT_START_DATE);
       Date endDate = createDate(endDateStr, DEFAULT_END_DATE);
+      Date leaderboardStartDate = createDate(leaderboardStartDateStr, null);
       int minRequiredGames = createInt(minRequiredGamesStr, DEFAULT_MIN_REQUIRED_GAMES);
 
       System.err.println(
@@ -63,6 +64,7 @@ public class FoosballDB {
             + startDate.toString()
             + " and "
             + endDate.toString()
+            + (leaderboardStartDate == null ? "" : "; leaderboard starting " + leaderboardStartDate.toString())
       );
 
       for (Player player : getPlayers())
@@ -129,7 +131,6 @@ public class FoosballDB {
       for (DBObject object : cursor) {
          try {
             Date started = (Date) object.get("date");
-            // TODO: filter dates in find() and remove this code
             if (started.before(startDate) || started.after(endDate))
                continue;
 
@@ -236,7 +237,7 @@ public class FoosballDB {
       String minRequiredGames = args.length >= 3 ? args[2] : null;
 
       FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
-      System.out.println(db.recalculate(startDate, endDate, minRequiredGames));
+      System.out.println(db.recalculate(startDate, endDate, minRequiredGames, null));
    }
 
    private static StringBuilder json(StringBuilder sb, String name, Number value) {
