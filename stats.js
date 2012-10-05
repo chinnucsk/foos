@@ -110,16 +110,24 @@
       return today - (date.getDay() * MILLISECONDS_IN_A_DAY);
    }
 
+   function startOfLeaderboardPeriod(mode) {
+      if (mode == Mode.THIS_WEEK)
+         return startOfWeek(new Date());
+
+      if (mode == Mode.TODAY)
+         return startOfDay(new Date());
+
+      return null;
+   }
+
    function getQueryString(mode) {
-      if (mode == Mode.THIS_WEEK) {
-         return '?startDate=' + seasonTimestamps[DEFAULT_MODE]['start'] + '&endDate=' + startOfWeek(new Date());
-      }
+      var activeMode = (mode == Mode.THIS_WEEK || mode == Mode.TODAY) ? DEFAULT_MODE : mode;
+      var leaderboardStartDate = startOfLeaderboardPeriod(mode);
 
-      if (mode == Mode.TODAY) {
-         return '?startDate=' + seasonTimestamps[DEFAULT_MODE]['start'] + '&endDate=' + startOfDay(new Date());
-      }
-
-      return '?startDate=' + seasonTimestamps[mode]['start'] + '&endDate=' + seasonTimestamps[mode]['end'] + '&minReqGames=1';
+      return '?startDate=' + seasonTimestamps[activeMode]['start']
+         + '&endDate=' + seasonTimestamps[activeMode]['end']
+         + '&minReqGames=1'
+         + (leaderboardStartDate ? "&leaderboardStartDate=" + leaderboardStartDate : "");
    }
 
    function getPlayerListUrl(mode) {
@@ -189,13 +197,12 @@
          var mode = getMode();
 
          this.collection = new PlayerList();
-         this.collection.url = getPlayerListUrl(isLeaderBoard(mode) ? DEFAULT_MODE : mode);
+         this.collection.url = getPlayerListUrl(mode);
 
          var view = this;
          this.collection.fetch({
             success:function (c, r) {
-               if (isLeaderBoard(mode))
-                  view.leaderBoard(view, c);
+               log(LogLevel.INFO, 'successfully fetched ' + c.length + ' players');
             },
             error:function (c, r) {
                log(LogLevel.ERROR, 'FAIL' + r);
@@ -204,12 +211,9 @@
          });
          this.counter = 0;
 
-         // Stats for the leaderboard are displayed differently, so don't render the table on load
-         if (!isLeaderBoard(mode)) {
-            this.collection.bind('add', this.appendPlayer, this);
-            this.collection.bind('all', this.render, this);
-            this.collection.bind('refresh', this.render, this);
-         }
+         this.collection.bind('add', this.appendPlayer, this);
+         this.collection.bind('all', this.render, this);
+         this.collection.bind('refresh', this.render, this);
       },
 
       initialize:function () {
