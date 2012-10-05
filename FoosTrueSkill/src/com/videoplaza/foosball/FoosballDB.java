@@ -110,7 +110,10 @@ public class FoosballDB {
    }
 
    private List<Player> playerStats() {
-      List<Player> stats = new ArrayList<Player>(players.values());
+      List<Player> stats = new ArrayList<Player>();
+
+      for (Entry<String, Player> entry : players.entrySet())
+         stats.add(entry.getValue().minus(playersExceptLeaderboard.get(entry.getKey())));
 
       Collections.sort(stats, new Comparator<Player>() {
          @Override
@@ -184,17 +187,19 @@ public class FoosballDB {
             List<String> winningTeam = score.get(0) == 10 ? homeTeam : awayTeam;
             List<String> losingTeam = score.get(0) != 10 ? homeTeam : awayTeam;
 
+            boolean isBeforeLeaderboardStart = leaderboardStartDate != null && started.before(leaderboardStartDate);
+
             for (String name : winningTeam) {
                getPlayer(name).win();
 
-               if (leaderboardStartDate != null)
+               if (isBeforeLeaderboardStart)
                   getPlayerExceptLeaderboard(name).win();
             }
 
             for (String name : losingTeam) {
                getPlayer(name).lose();
 
-               if (leaderboardStartDate != null)
+               if (isBeforeLeaderboardStart)
                   getPlayerExceptLeaderboard(name).lose();
             }
 
@@ -202,7 +207,7 @@ public class FoosballDB {
                String name = (String) s.get("player");
                getPlayer(name).score();
 
-               if (leaderboardStartDate != null)
+               if (isBeforeLeaderboardStart)
                   getPlayerExceptLeaderboard(name).score();
             }
          } catch (Exception _) {
