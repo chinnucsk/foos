@@ -41,6 +41,15 @@ public class FoosballDB {
    private SortedMap<Date, Game> processedGames;
    private Map<String, Player> players = new HashMap<String, Player>();
 
+   public static void main(String[] args) {
+      String startDate = args.length >= 1 ? args[0] : null;
+      String endDate = args.length >= 2 ? args[1] : null;
+      String minRequiredGames = args.length >= 3 ? args[2] : null;
+
+      FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
+      System.out.println(db.recalculate(startDate, endDate, minRequiredGames, null));
+   }
+
    public FoosballDB(String host, String database) {
       try {
          Mongo mongo = new Mongo(host);
@@ -229,15 +238,6 @@ public class FoosballDB {
       } catch (Exception _) {
          return fallback;
       }
-   }
-
-   public static void main(String[] args) {
-      String startDate = args.length >= 1 ? args[0] : null;
-      String endDate = args.length >= 2 ? args[1] : null;
-      String minRequiredGames = args.length >= 3 ? args[2] : null;
-
-      FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
-      System.out.println(db.recalculate(startDate, endDate, minRequiredGames, null));
    }
 
    private static StringBuilder json(StringBuilder sb, String name, Number value) {
