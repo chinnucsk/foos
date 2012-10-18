@@ -156,10 +156,15 @@ Foos.getPlayers = function(callback) {
 	if ($.isFunction(callback)) {
 		$.get(Foos_PLURL + '_find?batch_size=1000', function(data) {
 			var players = [];
-			for (result in data.results) players.push(data.results[result].name);
+			for (result in data.results) {
+				var name = data.results[result].name;
+				if (name && name != '') {
+					players.push(name);
+				}
+			}
 			players.sort();
 			callback(players);
-		});
+		},'json');
 	}
 }
 
