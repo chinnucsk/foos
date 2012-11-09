@@ -48,11 +48,19 @@ public class FoosTrueSkillServer extends HttpServlet {
 
       Cors.addHeaders(req, resp);
 
-      String path = req.getPathInfo();
-      if (path.endsWith("player"))
-         printPlayerStats(resp, output);
-      else if (path.endsWith("game"))
-         printGameStats(resp);
+      try {
+         switch (RequestType.from(req)) {
+         case GAME:
+            printGameStats(resp);
+            break;
+
+         case PLAYER:
+            printPlayerStats(resp, output);
+            break;
+         }
+      } catch (Exception e) {
+         resp.sendError(500, e.toString());
+      }
    }
 
    private void printPlayerStats(HttpServletResponse resp, String output) throws IOException {
