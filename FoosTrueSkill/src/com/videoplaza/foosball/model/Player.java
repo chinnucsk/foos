@@ -27,6 +27,15 @@ public class Player {
       losses = other.getLosses();
    }
 
+   public Player(String name, double skill, double uncertainty, long goals, long wins, long losses) {
+      this.name = name;
+      this.skill = skill;
+      this.uncertainty = uncertainty;
+      this.goals = goals;
+      this.wins = wins;
+      this.losses = losses;
+   }
+
    public String getName() {
       return name;
    }
