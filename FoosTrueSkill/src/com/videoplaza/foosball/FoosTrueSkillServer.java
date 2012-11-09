@@ -44,8 +44,6 @@ public class FoosTrueSkillServer extends HttpServlet {
       String leaderboardStartDate = req.getParameter(Param.LEADERBOARD_START_DATE);
       String minRequiredGames = req.getParameter(Param.MIN_REQ_GAMES);
 
-      String output = db.recalculate(startDate, endDate, minRequiredGames, leaderboardStartDate);
-
       Cors.addHeaders(req, resp);
 
       try {
@@ -55,6 +53,7 @@ public class FoosTrueSkillServer extends HttpServlet {
             break;
 
          case PLAYER:
+            String output = db.recalculate(startDate, endDate, minRequiredGames, leaderboardStartDate).toJson();
             printPlayerStats(resp, output);
             break;
          }

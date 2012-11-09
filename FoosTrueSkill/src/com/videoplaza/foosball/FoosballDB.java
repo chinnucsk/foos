@@ -12,7 +12,6 @@ import com.videoplaza.foosball.model.Player;
 import com.videoplaza.foosball.skill.FoosballRating;
 
 import java.net.UnknownHostException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,7 +47,7 @@ public class FoosballDB {
       String minRequiredGames = args.length >= 3 ? args[2] : null;
 
       FoosballDB db = new FoosballDB("rouzbeh.videoplaza.org", "foos");
-      System.out.println(db.recalculate(startDate, endDate, minRequiredGames, null));
+      System.out.println(db.recalculate(startDate, endDate, minRequiredGames, null).toJson());
    }
 
    public FoosballDB(String host, String database) {
@@ -62,7 +61,7 @@ public class FoosballDB {
       }
    }
 
-   public String recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr, String leaderboardStartDateStr) {
+   public PlayerStats recalculate(String startDateStr, String endDateStr, String minRequiredGamesStr, String leaderboardStartDateStr) {
       Date startDate = createDate(startDateStr, DEFAULT_START_DATE);
       Date endDate = createDate(endDateStr, DEFAULT_END_DATE);
       Date leaderboardStartDate = createDate(leaderboardStartDateStr, null);
@@ -104,9 +103,10 @@ public class FoosballDB {
             System.err.println("Disqualifying non-4-player game: " + game);
          }
       }
+
       updatePlayers(new ArrayList<Player>(players.values()));
 
-      return toJson(playerStats(), minRequiredGames);
+      return new PlayerStats(playerStats(), minRequiredGames);
    }
 
    private List<Player> playerStats() {
@@ -123,40 +123,6 @@ public class FoosballDB {
       });
 
       return stats;
-   }
-
-   private String toJson(List<Player> players, int minRequiredGames) {
-      StringBuilder sb = new StringBuilder();
-      int rank = 1;
-      sb.append("[");
-      boolean first = true;
-      for (Player player : players) {
-         if ((player.getWins() + player.getLosses()) < minRequiredGames)
-            continue;
-
-         player.setRank(rank++);
-
-         if (!first)
-            sb.append(",");
-         appendPlayerJson(sb, player);
-
-         first = false;
-      }
-      sb.append("]");
-      return sb.toString();
-   }
-
-   private void appendPlayerJson(StringBuilder sb, Player player) {
-      sb.append("{");
-      json(sb, "rank", player.getRank()).append(",");
-      json(sb, "name", player.getName()).append(",");
-      json(sb, "trueskill", player.getTrueSkill()).append(",");
-      json(sb, "mu", player.getSkill()).append(",");
-      json(sb, "sigma", player.getUncertainty()).append(",");
-      json(sb, "wins", player.getWins()).append(",");
-      json(sb, "losses", player.getLosses()).append(",");
-      json(sb, "goals", player.getGoals());
-      sb.append("}\n");
    }
 
    private boolean isFourPlayerGame(Game game) {
@@ -275,17 +241,6 @@ public class FoosballDB {
       } catch (Exception _) {
          return fallback;
       }
-   }
-
-   private static StringBuilder json(StringBuilder sb, String name, Number value) {
-      NumberFormat nf = NumberFormat.getInstance();
-      nf.setGroupingUsed(false);
-      nf.setMaximumFractionDigits(4);
-      return sb.append("\"").append(name).append("\"").append(":").append(value != null ? nf.format(value) : 0);
-   }
-
-   private static StringBuilder json(StringBuilder sb, String name, String value) {
-      return sb.append("\"").append(name).append("\"").append(":\"").append(value).append('"');
    }
 
    private static void recordGame(Map<String, Player> players, FoosballRating ratings, Game game) {
