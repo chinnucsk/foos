@@ -2,20 +2,17 @@ package com.videoplaza.foosball;
 
 import com.videoplaza.foosball.model.Player;
 
-import java.util.List;
-
 public class Team {
-   private final List<Player> players;
+   private final Player player1;
+   private final Player player2;
 
-   public Team(List<Player> players) {
-      if (players.size() != 2)
-         throw new IllegalArgumentException("a team must contain exactly 2 players!");
-
-      this.players = players;
+   public Team(Player player1, Player player2) {
+      this.player1 = player1;
+      this.player2 = player2;
    }
 
    public double getAverageTrueSkill() {
-      return (players.get(0).getTrueSkill() + players.get(1).getTrueSkill()) / 2.0;
+      return (player1.getTrueSkill() + player2.getTrueSkill()) / 2.0;
    }
 
    @Override
@@ -25,6 +22,6 @@ public class Team {
 
    @Override
    public int hashCode() {
-      return 31 * (players.get(0).getName().hashCode() + players.get(1).getName().hashCode());
+      return 31 * (player1.getName().hashCode() + player2.getName().hashCode());
    }
 }
