@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.videoplaza.foosball.model.Player;
 
-import java.text.NumberFormat;
 import java.util.List;
 
 public class PlayerStats {
@@ -25,49 +24,28 @@ public class PlayerStats {
       .toImmutableList();
    }
 
+   public List<Player> getPlayers() {
+      return players;
+   }
+
    public String toJson() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("[");
+      StringBuilder builder = new StringBuilder();
+      builder.append("[\n");
 
-      int rank = 1;
-      boolean first = true;
-      for (Player player : players) {
-         player.setRank(rank++);
+      for (int i = 0; i < players.size(); i++) {
+         Player player = players.get(i);
+         player.setRank(i + 1);
 
-         if (!first)
-            sb.append(",");
-         appendPlayerJson(sb, player);
+         builder.append(player.toJson());
 
-         first = false;
+         if (i < (players.size() - 1))
+            builder.append(",");
+
+         builder.append("\n");
       }
 
-      sb.append("]");
+      builder.append("]");
 
-      return sb.toString();
-   }
-
-   private void appendPlayerJson(StringBuilder sb, Player player) {
-      sb.append("{");
-      json(sb, "rank", player.getRank()).append(",");
-      json(sb, "name", player.getName()).append(",");
-      json(sb, "trueskill", player.getTrueSkill()).append(",");
-      json(sb, "mu", player.getSkill()).append(",");
-      json(sb, "sigma", player.getUncertainty()).append(",");
-      json(sb, "wins", player.getWins()).append(",");
-      json(sb, "losses", player.getLosses()).append(",");
-      json(sb, "goals", player.getGoals());
-      sb.append("}\n");
-   }
-
-   private StringBuilder json(StringBuilder sb, String name, Number value) {
-      NumberFormat nf = NumberFormat.getInstance();
-      nf.setGroupingUsed(false);
-      nf.setMaximumFractionDigits(4);
-
-      return sb.append("\"").append(name).append("\"").append(":").append(value != null ? nf.format(value) : 0);
-   }
-
-   private StringBuilder json(StringBuilder sb, String name, String value) {
-      return sb.append("\"").append(name).append("\"").append(":\"").append(value).append('"');
+      return builder.toString();
    }
 }

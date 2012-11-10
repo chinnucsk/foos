@@ -14,7 +14,7 @@ public class PlayerStatsTest {
       Player player2 = new Player("player2", 12.1314, 15.1617, 18, 19, 20);
 
       String actual = new PlayerStats(Arrays.asList(player1, player2)).toJson();
-      String expected = String.format("[%s,%s]", json(player1, 1), json(player2, 2));
+      String expected = String.format("[\n%s,\n%s\n]", player1.toJson(), player2.toJson());
 
       assertEquals(actual, expected);
    }
@@ -26,15 +26,8 @@ public class PlayerStatsTest {
       Player player3 = new Player("player3", 21.2324, 25.2627, 28, 29, 30);
 
       String actual = new PlayerStats(Arrays.asList(player1, player2, player3), 10).toJson();
-      String expected = String.format("[%s,%s]", json(player1, 1), json(player3, 2));
+      String expected = String.format("[\n%s,\n%s\n]", player1.toJson(), player3.toJson());
 
       assertEquals(actual, expected);
-   }
-
-   private String json(Player player, int rank) {
-      return String.format(
-         "{\"rank\":%d,\"name\":\"%s\",\"trueskill\":%1.4f,\"mu\":%1.4f,\"sigma\":%1.4f,\"wins\":%d,\"losses\":%d,\"goals\":%d}\n",
-         rank, player.getName(), player.getTrueSkill(), player.getSkill(), player.getUncertainty(), player.getWins(), player.getLosses(), player.getGoals()
-      );
    }
 }
