@@ -1,6 +1,8 @@
 package com.videoplaza.foosball;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.videoplaza.foosball.model.Player;
@@ -32,6 +34,32 @@ public class TeamTest {
       ));
 
       assertEquals(23.6202, team.getAverageTrueSkill(), 0.1);
+   }
+
+   @Test
+   public void testEquals() throws Exception {
+      Team team = new Team(Arrays.asList(new Player("player1"), new Player("player2")));
+
+      Team sameOrder = new Team(Arrays.asList(new Player("player1"), new Player("player2")));
+      Team differentOrder = new Team(Arrays.asList(new Player("player2"), new Player("player1")));
+      Team differentTeam = new Team(Arrays.asList(new Player("player2"), new Player("player3")));
+
+      assertTrue(team.equals(sameOrder));
+      assertTrue(team.equals(differentOrder));
+      assertFalse(team.equals(differentTeam));
+   }
+
+   @Test
+   public void equalTeamsHaveSameHashCode() throws Exception {
+      Team team = new Team(Arrays.asList(new Player("player1"), new Player("player2")));
+
+      Team sameOrder = new Team(Arrays.asList(new Player("player1"), new Player("player2")));
+      Team differentOrder = new Team(Arrays.asList(new Player("player2"), new Player("player1")));
+      Team differentTeam = new Team(Arrays.asList(new Player("player2"), new Player("player3")));
+
+      assertTrue(team.hashCode() == sameOrder.hashCode());
+      assertTrue(team.hashCode() == differentOrder.hashCode());
+      assertFalse(team.hashCode() == differentTeam.hashCode());
    }
 
    private void catchExceptionOrFail(List<Player> players) {

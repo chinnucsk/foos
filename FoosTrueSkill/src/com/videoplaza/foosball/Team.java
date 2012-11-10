@@ -17,4 +17,14 @@ public class Team {
    public double getAverageTrueSkill() {
       return (players.get(0).getTrueSkill() + players.get(1).getTrueSkill()) / 2.0;
    }
+
+   @Override
+   public boolean equals(Object other) {
+      return other instanceof Team && this.hashCode() == other.hashCode();
+   }
+
+   @Override
+   public int hashCode() {
+      return 31 * (players.get(0).getName().hashCode() + players.get(1).getName().hashCode());
+   }
 }
