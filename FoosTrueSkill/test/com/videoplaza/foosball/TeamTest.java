@@ -3,6 +3,8 @@ package com.videoplaza.foosball;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.videoplaza.foosball.model.Player;
 import org.junit.Before;
@@ -24,12 +26,15 @@ public class TeamTest {
 
    @Test
    public void testGetAverageTrueSkill() throws Exception {
-      Team team = new Team(
-         new Player("player1", 26.913, 1.0395, 693, 96, 73),
-         new Player("player2", 26.3307, 0.9616, 393, 374, 3489)
-      );
+      Player player1 = mock(Player.class);
+      when(player1.getTrueSkill()).thenReturn(1.0);
 
-      assertEquals(23.6202, team.getAverageTrueSkill(), 0.1);
+      Player player2 = mock(Player.class);
+      when(player2.getTrueSkill()).thenReturn(2.0);
+
+      Team team = new Team(player1, player2);
+
+      assertEquals(1.5, team.getAverageTrueSkill(), 0.0001);
    }
 
    @Test
