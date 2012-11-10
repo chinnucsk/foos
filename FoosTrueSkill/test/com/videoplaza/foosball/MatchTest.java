@@ -3,6 +3,7 @@ package com.videoplaza.foosball;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,5 +60,28 @@ public class MatchTest {
       assertTrue(match.hashCode() == sameMatch.hashCode());
       assertTrue(match.hashCode() == differentOrder.hashCode());
       assertFalse(match.hashCode() == differentMatch.hashCode());
+   }
+
+   @Test
+   public void testCompareTo() throws Exception {
+      Match match1 = mock(Match.class);
+      when(match1.getTrueSkillDelta()).thenReturn(1.2345);
+      when(match1.compareTo(any(Match.class))).thenCallRealMethod();
+
+      Match match2 = mock(Match.class);
+      when(match2.getTrueSkillDelta()).thenReturn(2.3456);
+      when(match2.compareTo(any(Match.class))).thenCallRealMethod();
+
+      Match match3 = mock(Match.class);
+      when(match3.getTrueSkillDelta()).thenReturn(2.3456);
+      when(match3.compareTo(any(Match.class))).thenCallRealMethod();
+
+      assertEquals(-1, match1.compareTo(match2));
+      assertEquals(-1, match1.compareTo(match3));
+
+      assertEquals(0, match1.compareTo(match1));
+      assertEquals(0, match2.compareTo(match3));
+
+      assertEquals(1, match2.compareTo(match1));
    }
 }

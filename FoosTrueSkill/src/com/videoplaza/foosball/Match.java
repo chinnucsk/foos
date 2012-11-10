@@ -3,7 +3,7 @@ package com.videoplaza.foosball;
 import java.util.Arrays;
 import java.util.List;
 
-public class Match {
+public class Match implements Comparable<Match> {
    private final Team team1;
    private final Team team2;
 
@@ -28,5 +28,16 @@ public class Match {
    @Override
    public int hashCode() {
       return 31 * (team1.hashCode() + team2.hashCode());
+   }
+
+   @Override
+   public int compareTo(Match other) {
+      if (this.getTrueSkillDelta() < other.getTrueSkillDelta())
+         return -1;
+
+      if (this.getTrueSkillDelta() > other.getTrueSkillDelta())
+         return 1;
+
+      return 0;
    }
 }
