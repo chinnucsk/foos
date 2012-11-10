@@ -101,4 +101,19 @@ public class PlayerTest {
       assertEquals(10d, p2.getSkill(), 0);
       assertEquals(3d, p2.getUncertainty(), 0);
    }
+
+   @Test
+   public void testToJson() throws Exception {
+      Player p1 = new Player("foo");
+      p1.setRank(27);
+      p1.setSkill(1.2345);
+      p1.setUncertainty(6.7891);
+      p1.setWins(123);
+      p1.setLosses(456);
+      p1.setGoals(789);
+
+      String expected = "{\"rank\":27,\"name\":\"foo\",\"trueskill\":-19.1328,\"mu\":1.2345,\"sigma\":6.7891,\"wins\":123,\"losses\":456,\"goals\":789}";
+
+      assertEquals(expected, p1.toJson());
+   }
 }

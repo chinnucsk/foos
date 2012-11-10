@@ -1,5 +1,7 @@
 package com.videoplaza.foosball.model;
 
+import static com.videoplaza.foosball.Json.json;
+
 public class Player {
    private final String name;
 
@@ -126,5 +128,24 @@ public class Player {
       delta.setTrueSkill(getTrueSkill() - other.getTrueSkill());
 
       return delta;
+   }
+
+   public String toJson() {
+      StringBuilder builder = new StringBuilder();
+
+      builder.append("{");
+
+      json(builder, "rank", rank).append(",");
+      json(builder, "name", name).append(",");
+      json(builder, "trueskill", getTrueSkill()).append(",");
+      json(builder, "mu", skill).append(",");
+      json(builder, "sigma", uncertainty).append(",");
+      json(builder, "wins", wins).append(",");
+      json(builder, "losses", losses).append(",");
+      json(builder, "goals", goals);
+
+      builder.append("}");
+
+      return builder.toString();
    }
 }
