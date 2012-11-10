@@ -1,7 +1,10 @@
 package com.videoplaza.foosball;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.videoplaza.foosball.model.Player;
 import org.junit.Before;
@@ -23,6 +26,23 @@ public class MatchTest {
       sameMatch = new Match(team1, team2);
       differentOrder = new Match(team2, team1);
       differentMatch = new Match(team1, team3);
+   }
+
+   @Test
+   public void testTrueSkillDelta() throws Exception {
+      Team team1 = mock(Team.class);
+      when(team1.getAverageTrueSkill()).thenReturn(1.2345);
+
+      Team team2 = mock(Team.class);
+      when(team2.getAverageTrueSkill()).thenReturn(2.3456);
+
+      Team team3 = mock(Team.class);
+      when(team3.getAverageTrueSkill()).thenReturn(2.3456);
+
+      assertEquals(1.1111, new Match(team1, team2).getTrueSkillDelta(), 0.00001);
+      assertEquals(1.1111, new Match(team2, team1).getTrueSkillDelta(), 0.00001);
+      assertEquals(0.0, new Match(team2, team2).getTrueSkillDelta(), 0.00001);
+      assertEquals(0.0, new Match(team2, team3).getTrueSkillDelta(), 0.00001);
    }
 
    @Test

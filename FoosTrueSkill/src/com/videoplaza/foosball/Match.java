@@ -16,6 +16,10 @@ public class Match {
       return Arrays.asList(team1, team2);
    }
 
+   public double getTrueSkillDelta() {
+      return Math.abs(team1.getAverageTrueSkill() - team2.getAverageTrueSkill());
+   }
+
    @Override
    public boolean equals(Object other) {
       return other instanceof Match && this.hashCode() == other.hashCode();
