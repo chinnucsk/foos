@@ -38,6 +38,23 @@ public class TeamTest {
    }
 
    @Test
+   public void testToJson() throws Exception {
+      Player player1 = mock(Player.class);
+      when(player1.getName()).thenReturn("player1");
+      when(player1.getTrueSkill()).thenReturn(1.0);
+
+      Player player2 = mock(Player.class);
+      when(player2.getName()).thenReturn("player2");
+      when(player2.getTrueSkill()).thenReturn(2.0);
+
+      Team team = new Team(player1, player2);
+
+      String expected = "{\"players\":[\"player1\",\"player2\"],\"averageTrueSkill\":1.5}";
+
+      assertEquals(expected, team.toJson());
+   }
+
+   @Test
    public void testEquals() throws Exception {
       assertTrue(team.equals(team));
       assertTrue(team.equals(sameOrder));

@@ -1,5 +1,7 @@
 package com.videoplaza.foosball;
 
+import static com.videoplaza.foosball.Json.json;
+
 import com.videoplaza.foosball.model.Player;
 
 public class Team {
@@ -13,6 +15,20 @@ public class Team {
 
    public double getAverageTrueSkill() {
       return (player1.getTrueSkill() + player2.getTrueSkill()) / 2.0;
+   }
+
+   public String toJson() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("{\"players\":[\"");
+      builder.append(player1.getName());
+      builder.append("\",");
+      builder.append("\"");
+      builder.append(player2.getName());
+      builder.append("\"],");
+      json(builder, "averageTrueSkill", getAverageTrueSkill());
+      builder.append("}");
+
+      return builder.toString();
    }
 
    @Override
