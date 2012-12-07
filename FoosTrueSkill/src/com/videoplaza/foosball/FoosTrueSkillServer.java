@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -25,7 +27,7 @@ public class FoosTrueSkillServer extends HttpServlet {
    private static final String SERVER_PATH_SPEC = SERVER_CONTEXT_PATH + "*";
 
    private static final String GAME_STATS_CONTENT_TYPE = "text/plain";
-   private static final String PLAYER_STATS_CONTENT_TYPE = "application/json";
+   private static final String JSON_CONTENT_TYPE = "application/json";
 
    private static final String GAME_STATS_DELIMITER = "\t";
    private static final String GAME_STATS_VERSUS = "vs";
@@ -52,9 +54,13 @@ public class FoosTrueSkillServer extends HttpServlet {
             printGameStats(resp);
             break;
 
+         case MATCHMAKER:
+            List<String> players = Arrays.asList(req.getParameterValues(Param.PLAYERS));
+            printJson(resp, db.makeMatch(startDate, endDate, players));
+            break;
+
          case PLAYER:
-            String output = db.recalculate(startDate, endDate, minRequiredGames, leaderboardStartDate).toJson();
-            printPlayerStats(resp, output);
+            printJson(resp, db.recalculate(startDate, endDate, minRequiredGames, leaderboardStartDate).toJson());
             break;
          }
       } catch (Exception e) {
@@ -62,8 +68,8 @@ public class FoosTrueSkillServer extends HttpServlet {
       }
    }
 
-   private void printPlayerStats(HttpServletResponse resp, String output) throws IOException {
-      resp.setContentType(PLAYER_STATS_CONTENT_TYPE);
+   private void printJson(HttpServletResponse resp, String output) throws IOException {
+      resp.setContentType(JSON_CONTENT_TYPE);
       resp.getWriter().print(output);
    }
 
