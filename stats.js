@@ -13,26 +13,6 @@
          console.log(msg);
    }
 
-   var Mode = {
-      SEASON_2012Q4:'season2012Q4',
-      ALL_GAMES:'allGames',
-      SEASON_2012Q1_3:'season2012Q1_3',
-      OLD_TABLE:'oldTable',
-      THIS_WEEK:'thisWeek',
-      TODAY:'today',
-   };
-
-   var seasonTimestamps = {
-      'season2012Q4':{'start':'1346018400000', 'end':'95649030000000'},
-      'allGames':{'start':'0', 'end':'95649030000000'},
-      'season2012Q1_3':{'start':'1324584000000', 'end':'1346018400000'},
-      'oldTable':{'start':'0', 'end':'1324584000000'},
-   };
-
-   var DEFAULT_MODE = Mode.SEASON_2012Q4;
-
-   var MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
-
    var columns = [
       'Rank', 'Name', 'Games played', 'Wins', 'Losses', 'Winning pct', 'Goals', 'Goals per game', 'TrueSkill', 'mu', 'sigma', ];
 
@@ -116,14 +96,14 @@
       var activeMode = (mode == Mode.THIS_WEEK || mode == Mode.TODAY) ? DEFAULT_MODE : mode;
       var leaderboardStartDate = startOfLeaderboardPeriod(mode);
 
-      return '?startDate=' + seasonTimestamps[activeMode]['start']
-         + '&endDate=' + seasonTimestamps[activeMode]['end']
+      return '?startDate=' + SEASON_TIMESTAMPS[activeMode]['start']
+         + '&endDate=' + SEASON_TIMESTAMPS[activeMode]['end']
          + '&minReqGames=1'
          + (leaderboardStartDate ? "&leaderboardStartDate=" + leaderboardStartDate : "");
    }
 
    function getPlayerListUrl(mode) {
-      var url = 'http://rouzbeh.videoplaza.org:8080/player' + getQueryString(mode);
+      var url = TRUESKILL_SERVER + '/player' + getQueryString(mode);
       log(LogLevel.INFO, 'fetching data for ' + mode);
       log(LogLevel.INFO, url);
 
