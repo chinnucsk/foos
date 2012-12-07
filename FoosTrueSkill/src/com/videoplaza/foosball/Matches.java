@@ -1,6 +1,10 @@
 package com.videoplaza.foosball;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.videoplaza.foosball.model.Player;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +23,16 @@ public class Matches {
    }
 
    public String toJson() {
-      return null;
+      ImmutableList<String> matchJson = FluentIterable.from(matches)
+         .transform(new Function<Match, String>() {
+            @Override
+            public String apply(Match match) {
+               return match.toJson();
+            }
+         })
+         .toImmutableList();
+
+      return "[" + StringUtils.join(matchJson, ",") + "]";
    }
 
    private List<Match> permute(Player player1, Player player2, Player player3, Player player4) {
