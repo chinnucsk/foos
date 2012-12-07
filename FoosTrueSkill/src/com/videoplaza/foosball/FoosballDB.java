@@ -1,5 +1,7 @@
 package com.videoplaza.foosball;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -107,6 +109,21 @@ public class FoosballDB {
       updatePlayers(new ArrayList<Player>(players.values()));
 
       return new PlayerStats(playerStats(), minRequiredGames);
+   }
+
+   public String makeMatch(String startDate, String endDate, final List<String> playerNames) {
+      PlayerStats stats = recalculate(startDate, endDate, null, null);
+      Player[] playersInGame = FluentIterable.from(stats.getPlayers())
+         .filter(new Predicate<Player>() {
+            @Override
+            public boolean apply(Player player) {
+               return playerNames.contains(player.getName());
+            }
+         })
+         .toArray(Player.class);
+
+      return new Matches(playersInGame[0], playersInGame[1], playersInGame[2], playersInGame[3])
+         .toJson();
    }
 
    private List<Player> playerStats() {
