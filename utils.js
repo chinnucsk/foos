@@ -19,3 +19,13 @@ DEFAULT_MODE = Mode.SEASON_2012Q4;
 MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
 TRUESKILL_SERVER = 'http://rouzbeh.videoplaza.org:8080';
+
+function currentSeason() {
+   return SEASON_TIMESTAMPS[DEFAULT_MODE];
+}
+
+function makeTimestamps(mode) {
+   var season = mode ? SEASON_TIMESTAMPS[mode] : currentSeason();
+
+   return 'startDate=' + season['start'] + '&endDate=' + season['end'];
+}

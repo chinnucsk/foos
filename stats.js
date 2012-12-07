@@ -96,8 +96,7 @@
       var activeMode = (mode == Mode.THIS_WEEK || mode == Mode.TODAY) ? DEFAULT_MODE : mode;
       var leaderboardStartDate = startOfLeaderboardPeriod(mode);
 
-      return '?startDate=' + SEASON_TIMESTAMPS[activeMode]['start']
-         + '&endDate=' + SEASON_TIMESTAMPS[activeMode]['end']
+      return '?' + makeTimestamps(activeMode)
          + '&minReqGames=1'
          + (leaderboardStartDate ? "&leaderboardStartDate=" + leaderboardStartDate : "");
    }
