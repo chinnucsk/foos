@@ -11,6 +11,9 @@ Array.remove = function(array, from, to) {
 };
 
 $(function () {
+   var FOOS_SERVER = 'http://rouzbeh.videoplaza.org/foos/';
+   var MATCHMAKER_BASE_URI = TRUESKILL_SERVER + '/matchmaker?' + makeTimestamps();
+
    var token;
    var teams;
    var switched = false;
@@ -25,7 +28,7 @@ $(function () {
       }
 
       var score = Foos.getScore(game);
-      if (switched) { 
+      if (switched) {
          score.reverse();
       }
       $("#score0").text(score[0]);
@@ -50,7 +53,7 @@ $(function () {
       var posNum = pos.substr(1) * 1;
       var pl = teams[posColor];
       if (pl.length > 1){
-         pl = pl[posNum < 3 ? 0 : 1]; 
+         pl = pl[posNum < 3 ? 0 : 1];
       } else {
          pl = pl[0];
       }
@@ -75,7 +78,7 @@ $(function () {
             }
 
             teams.reverse();
-            
+
             var g = false;
             for (var team in teams) {
                for (var p in teams[team]) {
@@ -158,7 +161,7 @@ $(function () {
       ownGoal ? $("#og").addClass("activate") : $("#og").removeClass("activate");
    };
 
-   Foos.setHost('http://rouzbeh.videoplaza.org/foos/');
+   Foos.setHost(FOOS_SERVER);
    setupCircles("w", 0);
    setupCircles("b", 1);
 
@@ -173,7 +176,7 @@ $(function () {
       var x = [0, 1];
       for (var p in players) {
          var pl = players[p];
-         for (var i in x) { 
+         for (var i in x) {
             for (var j in x) {
                $("#team" + i + j).append('<option value="' + pl + '">' + pl + '</option>');
             }
@@ -261,10 +264,15 @@ $(function () {
       return bestTeams;
    };
 
-   var suggestTeams = function () {
-      var NEW_TABLE_START_DATE = '1324584000000';
-      var GET_TRUESKILL_URI = 'http://rouzbeh.videoplaza.org:8080/player?startDate=' + NEW_TABLE_START_DATE;
+   var getPlayerFromMatch = function(match, teamNum, playerNum) {
+      return match['teams'][teamNum]['players'][playerNum];
+   };
 
+   var getTeamTrueskillFromMatch = function(match, teamNum) {
+      return match['teams'][teamNum]['averageTrueSkill'];
+   };
+
+   var suggestTeams = function () {
       // Reset new-school player selections
       players = [];
 
@@ -276,30 +284,27 @@ $(function () {
       $("#game-select").hide();
       suggestionElement.show();
 
-      $.get(GET_TRUESKILL_URI, function (data) {
-         var skillFor = {};
-         $.each(data, function (i, val) {
-            skillFor[val.name] = val.trueskill;
+      var playerSep = '&player=';
+      var matchmakerUri = MATCHMAKER_BASE_URI + playerSep + getPlayers().join(playerSep);
+
+      $.get(matchmakerUri, function (matches) {
+         suggestionElement.empty();
+
+         $.each(matches, function (i, match) {
+            var t0p0 = getPlayerFromMatch(match, 0, 0);
+            var t0p1 = getPlayerFromMatch(match, 0, 1);
+            var t1p0 = getPlayerFromMatch(match, 1, 0);
+            var t1p1 = getPlayerFromMatch(match, 1, 1);
+
+            suggestionElement.append("<p>" + t0p0 + " & " + t0p1 + " vs " + t1p0 + " & " + t1p1 + ": <b>" + match['trueSkillDelta'] + "</b></p>");
          });
 
-         var selectedPlayers = getPlayers();
-         var bestTeams = getBestTeams(selectedPlayers, skillFor);
-         var t0p0 = selectedPlayers[bestTeams[0][0]];
-         var t0p1 = selectedPlayers[bestTeams[0][1]];
-         var t1p0 = selectedPlayers[bestTeams[1][0]];
-         var t1p1 = selectedPlayers[bestTeams[1][1]];
-
-         suggestionElement.empty();
-         suggestionElement.append("<p>" + t0p0 + " and " + t0p1 + ": " +
-            ((skillFor[t0p0] + skillFor[t0p1]) / 2) + "</p>");
-         suggestionElement.append("<p>" + t1p0 + " and " + t1p1 + ": " +
-            ((skillFor[t1p0] + skillFor[t1p1]) / 2) + "</p>");
-
+         match = matches[0];
          playerListElement.empty();
-         playerListElement.append(getPlayerLi(t0p0));
-         playerListElement.append(getPlayerLi(t0p1));
-         playerListElement.append(getPlayerLi(t1p0));
-         playerListElement.append(getPlayerLi(t1p1));
+         playerListElement.append(getPlayerLi(getPlayerFromMatch(match, 0, 0)));
+         playerListElement.append(getPlayerLi(getPlayerFromMatch(match, 0, 1)));
+         playerListElement.append(getPlayerLi(getPlayerFromMatch(match, 1, 0)));
+         playerListElement.append(getPlayerLi(getPlayerFromMatch(match, 1, 1)));
          playerListElement.show();
       },'json');
    };
@@ -322,7 +327,7 @@ $(function () {
                   Array.remove(numbers,i);
                }
             };
-         });     
+         });
       }
       return numbers[0];
    };
@@ -337,7 +342,7 @@ $(function () {
    $("ul#playerlist").click(function (e) {
       if(e.target && e.target.nodeName == "LI") {
          var player = $(e.target);
-         //this is to undo selection of players 
+         //this is to undo selection of players
          if ($('.number', player).length > 0) {
             Array.remove(players, players.indexOf(player.data('player')));
             $('.number', player).remove();
