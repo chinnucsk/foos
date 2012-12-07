@@ -1,5 +1,7 @@
 package com.videoplaza.foosball;
 
+import static com.videoplaza.foosball.Json.json;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +25,19 @@ public class Match implements Comparable<Match> {
    @Override
    public boolean equals(Object other) {
       return other instanceof Match && this.hashCode() == other.hashCode();
+   }
+
+   public String toJson() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("{\"teams\":[");
+      builder.append(team1.toJson());
+      builder.append(",");
+      builder.append(team2.toJson());
+      builder.append("],");
+      json(builder, "trueSkillDelta", getTrueSkillDelta());
+      builder.append("}");
+
+      return builder.toString();
    }
 
    @Override
