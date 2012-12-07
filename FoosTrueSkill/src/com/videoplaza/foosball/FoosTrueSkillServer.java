@@ -55,8 +55,7 @@ public class FoosTrueSkillServer extends HttpServlet {
             break;
 
          case MATCHMAKER:
-            List<String> players = Arrays.asList(req.getParameterValues(Param.PLAYERS));
-            printJson(resp, db.makeMatch(startDate, endDate, players));
+            printJson(resp, db.makeMatch(startDate, endDate, getPlayers(req)));
             break;
 
          case PLAYER:
@@ -64,8 +63,19 @@ public class FoosTrueSkillServer extends HttpServlet {
             break;
          }
       } catch (Exception e) {
+         e.printStackTrace();
          resp.sendError(500, e.toString());
       }
+   }
+
+   private List<String> getPlayers(HttpServletRequest req) {
+      String[] players = req.getParameterValues(Param.PLAYERS);
+
+      int numPlayers = players == null ? 0 : players.length;
+      if (numPlayers != 4)
+         throw new IllegalArgumentException("4 players required for matchmaking; received " + numPlayers);
+
+      return Arrays.asList(players);
    }
 
    private void printJson(HttpServletResponse resp, String output) throws IOException {
