@@ -43,7 +43,7 @@ public class MatchTest {
       Team team3 = mock(Team.class);
       when(team3.getAverageTrueSkill()).thenReturn(2.3456);
 
-      assertEquals(1.1111, new Match(team1, team2).getTrueSkillDelta(), 0.00001);
+      assertEquals(-1.1111, new Match(team1, team2).getTrueSkillDelta(), 0.00001);
       assertEquals(1.1111, new Match(team2, team1).getTrueSkillDelta(), 0.00001);
       assertEquals(0.0, new Match(team2, team2).getTrueSkillDelta(), 0.00001);
       assertEquals(0.0, new Match(team2, team3).getTrueSkillDelta(), 0.00001);
@@ -101,7 +101,7 @@ public class MatchTest {
 
       Match match = new Match(new Team(players.get(0), players.get(1)), new Team(players.get(2), players.get(3)));
 
-      String expected = "{\"teams\":[" + match.getTeams().get(0).toJson() + "," + match.getTeams().get(1).toJson() + "],\"trueSkillDelta\":2}";
+      String expected = "{\"teams\":[" + match.getTeams().get(0).toJson() + "," + match.getTeams().get(1).toJson() + "],\"trueSkillDelta\":-2}";
 
       assertEquals(expected, match.toJson());
    }

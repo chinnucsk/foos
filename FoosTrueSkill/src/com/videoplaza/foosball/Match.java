@@ -19,7 +19,7 @@ public class Match implements Comparable<Match> {
    }
 
    public double getTrueSkillDelta() {
-      return Math.abs(team1.getAverageTrueSkill() - team2.getAverageTrueSkill());
+      return team1.getAverageTrueSkill() - team2.getAverageTrueSkill();
    }
 
    @Override
