@@ -63,6 +63,10 @@
    }
 
    function getMode() {
+      if (isChecked($('#season2013Q4'))) return Mode.SEASON_2013Q4;
+      if (isChecked($('#season2013Q3'))) return Mode.SEASON_2013Q3;
+      if (isChecked($('#season2013Q2'))) return Mode.SEASON_2013Q2;
+      if (isChecked($('#season2013Q1'))) return Mode.SEASON_2013Q1;
       if (isChecked($('#season2012Q4'))) return Mode.SEASON_2012Q4;
       if (isChecked($('#season2012Q1_3'))) return Mode.SEASON_2012Q1_3;
       if (isChecked($('#oldTable'))) return Mode.OLD_TABLE;
@@ -194,12 +198,7 @@
       },
 
       events:{
-         'click #season2012Q4':'fetchAndRender',
-         'click #season2012Q1_3':'fetchAndRender',
-         'click #oldTable':'fetchAndRender',
-         'click #allGames':'fetchAndRender',
-         'click #thisWeek':'fetchAndRender',
-         'click #today':'fetchAndRender',
+         'click #seasons':'fetchAndRender',
       },
 
       render:function () {
