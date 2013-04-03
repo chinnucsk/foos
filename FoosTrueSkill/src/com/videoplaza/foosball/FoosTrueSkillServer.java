@@ -32,7 +32,7 @@ public class FoosTrueSkillServer extends HttpServlet {
    private static final String GAME_STATS_DELIMITER = "\t";
    private static final String GAME_STATS_VERSUS = "vs";
 
-   private static final String MONGO_HOSTNAME = "rouzbeh.videoplaza.org";
+   private static final String MONGO_HOSTNAME = "foos.videoplaza.org";
    private static final String MONGO_DATABASE = "foos";
 
    private FoosballDB db = new FoosballDB(MONGO_HOSTNAME, MONGO_DATABASE);

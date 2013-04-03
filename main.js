@@ -11,7 +11,7 @@ Array.remove = function(array, from, to) {
 };
 
 $(function () {
-   var FOOS_SERVER = 'http://rouzbeh.videoplaza.org/foos/';
+   var FOOS_SERVER = 'http://foos.videoplaza.org/mongo/';
    var MATCHMAKER_BASE_URI = TRUESKILL_SERVER + '/matchmaker?' + makeTimestamps();
 
    var token;

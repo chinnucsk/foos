@@ -31,7 +31,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class HeatMap {
-   private static final String MONGO_HOST = "rouzbeh.videoplaza.org";
+   private static final String MONGO_HOST = "foos.videoplaza.org";
    private static final int MONGO_PORT = 27017;
    private static final String MONGO_DB = "foos";
 

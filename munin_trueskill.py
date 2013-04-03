@@ -4,7 +4,7 @@ import sys
 import json
 from urllib2 import urlopen
 
-url = 'http://rouzbeh.videoplaza.org/foos.php'
+url = 'http://foos.videoplaza.org/'
 players = json.loads(urlopen(url).read())
 
 def removeNonAscii(s):

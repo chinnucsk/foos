@@ -26,7 +26,7 @@ DEFAULT_MODE = Mode.SEASON_2013Q1;
 
 MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
-TRUESKILL_SERVER = 'http://rouzbeh.videoplaza.org:8080';
+TRUESKILL_SERVER = 'http://foos.videoplaza.org:8080';
 
 function currentSeason() {
    return SEASON_TIMESTAMPS[DEFAULT_MODE];
