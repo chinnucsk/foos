@@ -161,7 +161,6 @@ ul#playerlist {
   font-weight:bold;
   margin: 0;               /* The list fills the whole iPhone screen */
   padding: 0;
-  width: 320px;           /* Each cell is 320 pixels wide */
   background-color: white;
 }
 
