@@ -25,6 +25,7 @@ body {
   float: left;
   height: 100%;
   position: relative;
+  margin-top: -1%;
 }
 #table span {
   position: absolute;
@@ -109,7 +110,7 @@ body {
   z-index: 1000;
   position: absolute;
   top: 20%;
-  left: 10%;
+  left: 4%;
   border-radius: 10%;
   background-color: red;
   -moz-box-shadow:    0px 2px 4px rgba(0,0,0,0.50);
@@ -139,7 +140,7 @@ body {
 }
 
 #undo {
-  left: 85%;
+  left: 90%;
   background-image: -webkit-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
   background-image:    -moz-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
   background-image:     -ms-linear-gradient(-49deg, #FF0000 0%, #7A0000 100%);
