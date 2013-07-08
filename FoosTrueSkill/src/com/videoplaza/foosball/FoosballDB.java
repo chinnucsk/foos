@@ -2,6 +2,7 @@ package com.videoplaza.foosball;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -103,17 +104,23 @@ public class FoosballDB {
    }
 
    public String makeMatch(String startDate, String endDate, final List<String> playerNames) {
+      HashSet<String> names = new HashSet<String>(playerNames);
       PlayerStats stats = recalculate(startDate, endDate, null, null);
-      Player[] playersInGame = FluentIterable.from(stats.getPlayers())
+      List<Player> playersInGame = new ArrayList<Player>(FluentIterable.from(stats.getPlayers())
          .filter(new Predicate<Player>() {
             @Override
             public boolean apply(Player player) {
                return playerNames.contains(player.getName());
             }
-         })
-         .toArray(Player.class);
+         }).toImmutableList());
+      for (Player player : playersInGame) {
+         names.remove(player.getName());
+      }
+      for (String name : names) {
+         playersInGame.add(new Player(name));
+      }
 
-      return new Matches(playersInGame[0], playersInGame[1], playersInGame[2], playersInGame[3])
+      return new Matches(playersInGame.get(0), playersInGame.get(1), playersInGame.get(2), playersInGame.get(3))
          .toJson();
    }
 
