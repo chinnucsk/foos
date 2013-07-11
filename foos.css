@@ -15,7 +15,7 @@ body {
 .hide { display:none; }
 
 #table {
-  background: #5A9A36 url("img/table.svg") no-repeat;
+  background: #2a6707 url("img/table.svg") no-repeat;
   background-size: 100% 100%;
   height: 70%;
   box-shadow: inset 0 0 20px #000;
@@ -25,7 +25,6 @@ body {
   float: left;
   height: 100%;
   position: relative;
-  margin-top: -1%;
 }
 #table span {
   position: absolute;
